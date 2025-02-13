@@ -1,15 +1,38 @@
 import 'package:flutter/material.dart';
 import 'shop_page.dart'; // Import the shop page
+import 'login_page.dart'; // Import the login page
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.blue, // Global primary color
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      home: const HomePage(), // Set HomePage as the home screen
+    );
+  }
+}
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          SizedBox(height: 50), // Space from top
-          Text(
+          const SizedBox(height: 50), // Space from top
+          const Text(
             'PawRescue',
             style: TextStyle(
               fontSize: 28,
@@ -17,11 +40,11 @@ class HomePage extends StatelessWidget {
               color: Colors.orange,
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               children: [
@@ -38,7 +61,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.white,
         selectedItemColor: Colors.orange,
         unselectedItemColor: Colors.black54,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
@@ -72,7 +95,7 @@ class HomePage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 5,
@@ -84,11 +107,11 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(imagePath, width: 50, height: 50),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
@@ -107,7 +130,7 @@ class HomePage extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ShopPart()),
+            MaterialPageRoute(builder: (context) => const ShopPart()),
           );
         },
         borderRadius: BorderRadius.circular(12),
@@ -115,7 +138,7 @@ class HomePage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 5,
@@ -127,11 +150,11 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(imagePath, width: 50, height: 50),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
