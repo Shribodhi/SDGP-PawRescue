@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'shop_page.dart'; // Import the shop page
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -28,7 +27,6 @@ class HomePage extends StatelessWidget {
               mainAxisSpacing: 20,
               children: [
                 _buildClickableGridItem(context, 'Treatment History', 'assets/treatment.png'),
-                _buildShopGridItem(context, 'Injured', 'assets/injured.png'),
                 _buildClickableGridItem(context, 'Animal Profiles', 'assets/animal_profiles.png'),
                 _buildClickableGridItem(context, 'Medi-Center', 'assets/medi_center.png'),
               ],
@@ -101,51 +99,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildShopGridItem(BuildContext context, String title, String imagePath) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ShopPart()),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(imagePath, width: 50, height: 50),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ShopPart {
-  const ShopPart();
 }
