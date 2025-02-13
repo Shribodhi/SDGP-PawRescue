@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'shop_page.dart'; // Import the shop page
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -29,6 +30,12 @@ class HomePage extends StatelessWidget {
                 _buildClickableGridItem(context, 'Treatment History', 'assets/treatment.png'),
                 _buildClickableGridItem(context, 'Animal Profiles', 'assets/animal_profiles.png'),
                 _buildClickableGridItem(context, 'Medi-Center', 'assets/medi_center.png'),
+                _buildClickableGridItem(context, 'Shop', 'assets/shop.png', onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ShopPage()), // Navigate to Shop page
+                  );
+                }),
               ],
             ),
           ),
@@ -60,11 +67,11 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildClickableGridItem(BuildContext context, String title, String imagePath) {
+  Widget _buildClickableGridItem(BuildContext context, String title, String imagePath, {Function()? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
+        onTap: onTap ?? () {
           // Add navigation or functionality for other grid items
         },
         borderRadius: BorderRadius.circular(12),
