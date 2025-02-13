@@ -57,7 +57,7 @@ class LoginPage extends StatelessWidget {
                   'Remember Me',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
-                Spacer(),
+                const Spacer(),
                 TextButton(
                   onPressed: () {},
                   child: const Text(
