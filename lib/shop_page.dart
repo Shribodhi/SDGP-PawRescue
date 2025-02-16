@@ -10,10 +10,10 @@ class ShopPage extends StatelessWidget {
         title: const Text('Pet Shop'),
         backgroundColor: Colors.orange,
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text(
               'Welcome to the Pet Shop!',
               style: TextStyle(
