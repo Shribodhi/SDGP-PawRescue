@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'shop_page.dart'; // Import the shop page
+import 'shop_page.dart';
+import 'screens/pet_adoption_home_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -10,7 +11,7 @@ class HomePage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const SizedBox(height: 50), // Space from top
+          const SizedBox(height: 50),
           const Text(
             'PawRescue',
             style: TextStyle(
@@ -27,15 +28,47 @@ class HomePage extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               children: [
-                _buildClickableGridItem(context, 'Treatment History', 'assets/treatment.png'),
-                _buildClickableGridItem(context, 'Animal Profiles', 'assets/animal_profiles.png'),
-                _buildClickableGridItem(context, 'Medi-Center', 'assets/medi_center.png'),
-                _buildClickableGridItem(context, 'Shop', 'assets/shop.png', onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ShopPage()), // Navigate to Shop page
-                  );
-                }),
+                _buildClickableGridItem(
+                  context: context,
+                  title: 'Treatment History',
+                  imagePath: 'assets/treatment.png',
+                ),
+                _buildClickableGridItem(
+                  context: context,
+                  title: 'Animal Profiles',
+                  imagePath: 'assets/animal_profiles.png',
+                ),
+                _buildClickableGridItem(
+                  context: context,
+                  title: 'Medi-Center',
+                  imagePath: 'assets/medi_center.png',
+                ),
+                _buildClickableGridItem(
+                  context: context,
+                  title: 'Adoption',
+                  imagePath: 'assets/pet_adoption.png',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PetAdoptionHomePage(),
+                      ),
+                    );
+                  },
+                ),
+                _buildClickableGridItem(
+                  context: context,
+                  title: 'Shop',
+                  imagePath: 'assets/shop.png',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ShopPage(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -67,13 +100,16 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildClickableGridItem(BuildContext context, String title, String imagePath, {Function()? onTap}) {
+  Widget _buildClickableGridItem({
+    required BuildContext context,
+    required String title,
+    required String imagePath,
+    Function()? onTap,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap ?? () {
-          // Add navigation or functionality for other grid items
-        },
+        onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
