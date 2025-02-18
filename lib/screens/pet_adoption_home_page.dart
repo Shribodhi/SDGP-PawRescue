@@ -40,14 +40,14 @@ class PetAdoptionHomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: const [
                 PetCard(
-                  image: 'assets/puppies.jpg',
+                  image: 'assets/puppies.png',
                   title: 'Adorable Puppies',
                   subtitle: 'Autorine with puppies',
                   age: '49',
                 ),
                 SizedBox(height: 16),
                 PetCard(
-                  image: 'assets/kitten.jpg',
+                  image: 'assets/kitten.png',
                   title: 'Twin Kitten',
                   subtitle: 'Middle aged cat',
                   age: '55',

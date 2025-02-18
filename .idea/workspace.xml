@@ -5,13 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f83f9817-7137-4bfc-b90f-dd2ac3c8f1d0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/screens/pet_adoption_home_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/kitten.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/pet_adoption.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/puppies.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/shop.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/login_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/medi_centre_ui.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/pet_card.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/pet_adoption_home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/pet_adoption_home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medi_centre_ui.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,6 +87,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
+    "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "pet-adoption-ui",
     "ignore.virus.scanning.warn.message": "true",
     "io.flutter.reload.alreadyRun": "true",

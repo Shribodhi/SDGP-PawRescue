@@ -1,4 +1,3 @@
-// login_page.dart
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 
@@ -23,24 +22,24 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-            TextField(
+            const TextField(
               decoration: InputDecoration(
                 labelText: 'Username, Email or Phone Number',
-                labelStyle: TextStyle(color: Colors.grey[600]),
-                border: const OutlineInputBorder(),
-                focusedBorder: const OutlineInputBorder(
+                labelStyle: TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.blue),
                 ),
               ),
             ),
             const SizedBox(height: 15),
-            TextField(
+            const TextField(
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
-                labelStyle: TextStyle(color: Colors.grey[600]),
-                border: const OutlineInputBorder(),
-                focusedBorder: const OutlineInputBorder(
+                labelStyle: TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.blue),
                 ),
               ),
@@ -72,7 +71,9 @@ class LoginPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(
