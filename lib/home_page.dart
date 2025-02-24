@@ -1,8 +1,37 @@
 import 'package:flutter/material.dart';
 import 'shop_page.dart'; // Import the shop page
+import 'chat_screen.dart'; // Import the chat page
+import 'profile_screen.dart'; // Import the profile page
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0; // Track the selected tab
+
+  void _onItemTapped(int index) {
+    if (index == 1) {
+      // Navigate to Chat Page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatPage()),
+      );
+    } else if (index == 3) {
+      // Navigate to Profile Page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfileScreen()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +56,19 @@ class HomePage extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               children: [
-                _buildClickableGridItem(context, 'Treatment History', 'assets/treatment.png'),
-                _buildClickableGridItem(context, 'Animal Profiles', 'assets/animal_profiles.png'),
-                _buildClickableGridItem(context, 'Medi-Center', 'assets/medi_center.png'),
-                _buildClickableGridItem(context, 'Shop', 'assets/shop.png', onTap: () {
+                _buildClickableGridItem(
+                    context, 'Treatment History', 'assets/treatment.png'),
+                _buildClickableGridItem(
+                    context, 'Animal Profiles', 'assets/animal_profiles.png'),
+                _buildClickableGridItem(
+                    context, 'Medi-Center', 'assets/medi_center.png'),
+                _buildClickableGridItem(context, 'Shop', 'assets/shop.png',
+                    onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ShopPage()), // Navigate to Shop page
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ShopPage()), // Navigate to Shop page
                   );
                 }),
               ],
@@ -45,6 +80,8 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.white,
         selectedItemColor: Colors.orange,
         unselectedItemColor: Colors.black54,
+        currentIndex: _selectedIndex, // Highlight selected tab
+        onTap: _onItemTapped, // Handle tab navigation
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -67,13 +104,13 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildClickableGridItem(BuildContext context, String title, String imagePath, {Function()? onTap}) {
+  Widget _buildClickableGridItem(
+      BuildContext context, String title, String imagePath,
+      {Function()? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap ?? () {
-          // Add navigation or functionality for other grid items
-        },
+        onTap: onTap ?? () {},
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
