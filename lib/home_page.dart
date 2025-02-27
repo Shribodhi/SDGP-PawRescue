@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'shop_page.dart'; // Import the shop page
+import 'shop_page.dart';
+import 'travel_recommender.dart'; // Import the travel recommender page
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -34,6 +35,12 @@ class HomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const ShopPage()), // Navigate to Shop page
+                  );
+                }),
+                _buildClickableGridItem(context, 'Travel Recommender', 'assets/travel.png', onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const TravelRecommenderPage()), // Navigate to Travel Recommender page
                   );
                 }),
               ],
@@ -107,3 +114,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
