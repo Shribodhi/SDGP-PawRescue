@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\dev\flutter"
-export "FLUTTER_APPLICATION_PATH=C:\Users\Methu\Documents\GitHub\SDGP-PawRescue"
+export "FLUTTER_ROOT=D:\1 Samadhi UNI\SDGP\SDGP-PawRescue\.dart_tool\flutter"
+export "FLUTTER_APPLICATION_PATH=D:\1 Samadhi UNI\SDGP GIT 2\SDGP-PawRescue"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"
