@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:convert';
 
 class TravelRecommenderPage extends StatefulWidget {
   const TravelRecommenderPage({super.key});
@@ -8,66 +13,85 @@ class TravelRecommenderPage extends StatefulWidget {
 }
 
 class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
+  GoogleMapController? _mapController;
+  Position? _currentPosition;
+  List<Place> _nearbyPlaces = [];
   String _selectedCategory = 'All';
   final List<String> _categories = ['All', 'Jogging Areas', 'Pharmacies', 'Veterinarians'];
-  
-  // Mock data for nearby locations
-  final List<Map<String, dynamic>> _locations = [
-    {
-      'name': 'Central Park',
-      'type': 'Jogging Areas',
-      'distance': '0.5 km',
-      'rating': 4.8,
-      'address': '123 Park Avenue, City',
-      'image': 'assets/park.jpg',
-    },
-    {
-      'name': 'PetMed Pharmacy',
-      'type': 'Pharmacies',
-      'distance': '1.2 km',
-      'rating': 4.5,
-      'address': '456 Health Street, City',
-      'image': 'assets/pharmacy.jpg',
-    },
-    {
-      'name': 'Dr. Paws Veterinary Clinic',
-      'type': 'Veterinarians',
-      'distance': '0.8 km',
-      'rating': 4.9,
-      'address': '789 Animal Care Road, City',
-      'image': 'assets/vet.jpg',
-    },
-    {
-      'name': 'Riverside Trail',
-      'type': 'Jogging Areas',
-      'distance': '1.5 km',
-      'rating': 4.6,
-      'address': '321 River Road, City',
-      'image': 'assets/trail.jpg',
-    },
-    {
-      'name': 'Pet Pharmacy Plus',
-      'type': 'Pharmacies',
-      'distance': '2.0 km',
-      'rating': 4.3,
-      'address': '654 Medicine Avenue, City',
-      'image': 'assets/pharmacy2.jpg',
-    },
-    {
-      'name': 'Happy Pets Veterinary Hospital',
-      'type': 'Veterinarians',
-      'distance': '1.7 km',
-      'rating': 4.7,
-      'address': '987 Pet Health Boulevard, City',
-      'image': 'assets/vet2.jpg',
-    },
-  ];
 
-  List<Map<String, dynamic>> get filteredLocations {
-    if (_selectedCategory == 'All') {
-      return _locations;
-    } else {
-      return _locations.where((location) => location['type'] == _selectedCategory).toList();
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied');
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _currentPosition = position;
+    });
+    _getNearbyPlaces();
+  }
+
+  Future<void> _getNearbyPlaces() async {
+    if (_currentPosition == null) return;
+
+    final String apiKey = 'YOUR_GOOGLE_PLACES_API_KEY';
+    final String baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+
+    List<String> types = ['park', 'pharmacy', 'veterinary_care'];
+    _nearbyPlaces.clear();
+
+    for (String type in types) {
+      final response = await http.get(Uri.parse(
+          '$baseUrl?location=${_currentPosition!.latitude},${_currentPosition!.longitude}&radius=1500&type=$type&key=$apiKey'));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        for (var place in data['results']) {
+          _nearbyPlaces.add(Place(
+            name: place['name'],
+            type: _getReadableType(type),
+            latitude: place['geometry']['location']['lat'],
+            longitude: place['geometry']['location']['lng'],
+          ));
+        }
+      }
+    }
+
+    setState(() {});
+  }
+
+  String _getReadableType(String type) {
+    switch (type) {
+      case 'park':
+        return 'Jogging Areas';
+      case 'pharmacy':
+        return 'Pharmacies';
+      case 'veterinary_care':
+        return 'Veterinarians';
+      default:
+        return type;
     }
   }
 
@@ -80,37 +104,25 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
       ),
       body: Column(
         children: [
-          // Map View (Placeholder)
+          // Map View
           Container(
-            height: 200,
-            width: double.infinity,
-            color: Colors.grey[300],
-            child: Stack(
-              children: [
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.map, size: 50, color: Colors.grey),
-                      const SizedBox(height: 8),
-                      Text('Map View', style: TextStyle(color: Colors.grey[700])),
-                    ],
+            height: 300,
+            child: _currentPosition == null
+                ? const Center(child: CircularProgressIndicator())
+                : GoogleMap(
+                    onMapCreated: (controller) => _mapController = controller,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                      zoom: 14,
+                    ),
+                    markers: _nearbyPlaces
+                        .map((place) => Marker(
+                              markerId: MarkerId(place.name),
+                              position: LatLng(place.latitude, place.longitude),
+                              infoWindow: InfoWindow(title: place.name, snippet: place.type),
+                            ))
+                        .toSet(),
                   ),
-                ),
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: FloatingActionButton(
-                    mini: true,
-                    backgroundColor: Colors.white,
-                    onPressed: () {
-                      // Get current location
-                    },
-                    child: const Icon(Icons.my_location, color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
           ),
           
           // Category Filter
@@ -145,144 +157,26 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: filteredLocations.length,
+              itemCount: _nearbyPlaces.length,
               itemBuilder: (context, index) {
-                final location = filteredLocations[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Location Image
-                      Container(
-                        height: 120,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          ),
-                        ),
-                        child: const Center(
-                          child: Icon(Icons.image, size: 40, color: Colors.grey),
-                        ),
+                final place = _nearbyPlaces[index];
+                if (_selectedCategory == 'All' || _selectedCategory == place.type) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: ListTile(
+                      title: Text(place.name),
+                      subtitle: Text(place.type),
+                      trailing: IconButton(
+                        icon: Icon(Icons.directions),
+                        onPressed: () {
+                          _launchMapsUrl(place.latitude, place.longitude);
+                        },
                       ),
-                      
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Location Name and Type
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    location['name'],
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: _getCategoryColor(location['type']),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    location['type'],
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            
-                            const SizedBox(height: 8),
-                            
-                            // Location Address
-                            Row(
-                              children: [
-                                const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    location['address'],
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            
-                            const SizedBox(height: 8),
-                            
-                            // Distance and Rating
-                            Row(
-                              children: [
-                                const Icon(Icons.directions_walk, size: 16, color: Colors.grey),
-                                const SizedBox(width: 4),
-                                Text(
-                                  location['distance'],
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                const Icon(Icons.star, size: 16, color: Colors.amber),
-                                const SizedBox(width: 4),
-                                Text(
-                                  location['rating'].toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            
-                            const SizedBox(height: 16),
-                            
-                            // Directions Button
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  // Navigate to directions
-                                },
-                                icon: const Icon(Icons.directions),
-                                label: const Text('Directions'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
               },
             ),
           ),
@@ -291,17 +185,21 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
     );
   }
 
-  Color _getCategoryColor(String category) {
-    switch (category) {
-      case 'Jogging Areas':
-        return Colors.green;
-      case 'Pharmacies':
-        return Colors.blue;
-      case 'Veterinarians':
-        return Colors.purple;
-      default:
-        return Colors.orange;
+  void _launchMapsUrl(double lat, double lng) async {
+    final url = 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
     }
   }
 }
 
+class Place {
+  final String name;
+  final String type;
+  final double latitude;
+  final double longitude;
+
+  Place({required this.name, required this.type, required this.latitude, required this.longitude});
+}
