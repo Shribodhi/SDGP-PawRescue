@@ -18,6 +18,8 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
   List<Place> _nearbyPlaces = [];
   String _selectedCategory = 'All';
   final List<String> _categories = ['All', 'Jogging Areas', 'Pharmacies', 'Veterinarians'];
+  bool _isLoading = false;
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -26,56 +28,84 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
   }
 
   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied');
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
     setState(() {
-      _currentPosition = position;
+      _isLoading = true;
+      _errorMessage = '';
     });
-    _getNearbyPlaces();
+
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw 'Location services are disabled.';
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw 'Location permissions are denied';
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw 'Location permissions are permanently denied';
+      }
+
+      Position position = await Geolocator.getCurrentPosition();
+      setState(() {
+        _currentPosition = position;
+      });
+      await _getNearbyPlaces();
+    } catch (e) {
+      print('Error getting location: $e');
+      setState(() {
+        _errorMessage = 'Error: $e';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _getNearbyPlaces() async {
     if (_currentPosition == null) return;
 
-    final String apiKey = 'YOUR_GOOGLE_PLACES_API_KEY';
+    final String apiKey = 'AIzaSyBN4ak6Umtd-Czy8eAlZ2oYT3b3iCDqvYY';
     final String baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
 
     List<String> types = ['park', 'pharmacy', 'veterinary_care'];
     _nearbyPlaces.clear();
 
     for (String type in types) {
-      final response = await http.get(Uri.parse(
-          '$baseUrl?location=${_currentPosition!.latitude},${_currentPosition!.longitude}&radius=1500&type=$type&key=$apiKey'));
+      try {
+        final response = await http.get(Uri.parse(
+            '$baseUrl?location=${_currentPosition!.latitude},${_currentPosition!.longitude}&radius=1500&type=$type&key=$apiKey'));
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        for (var place in data['results']) {
-          _nearbyPlaces.add(Place(
-            name: place['name'],
-            type: _getReadableType(type),
-            latitude: place['geometry']['location']['lat'],
-            longitude: place['geometry']['location']['lng'],
-          ));
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          if (data['status'] == 'OK') {
+            for (var place in data['results']) {
+              _nearbyPlaces.add(Place(
+                name: place['name'],
+                type: _getReadableType(type),
+                latitude: place['geometry']['location']['lat'],
+                longitude: place['geometry']['location']['lng'],
+              ));
+            }
+          } else {
+            print('API Error: ${data['status']}');
+            throw 'API Error: ${data['status']}';
+          }
+        } else {
+          print('HTTP Error: ${response.statusCode}');
+          throw 'HTTP Error: ${response.statusCode}';
         }
+      } catch (e) {
+        print('Error fetching places: $e');
+        setState(() {
+          _errorMessage = 'Error fetching places: $e';
+        });
       }
     }
 
@@ -107,22 +137,26 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
           // Map View
           Container(
             height: 300,
-            child: _currentPosition == null
+            child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : GoogleMap(
-                    onMapCreated: (controller) => _mapController = controller,
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                      zoom: 14,
-                    ),
-                    markers: _nearbyPlaces
-                        .map((place) => Marker(
-                              markerId: MarkerId(place.name),
-                              position: LatLng(place.latitude, place.longitude),
-                              infoWindow: InfoWindow(title: place.name, snippet: place.type),
-                            ))
-                        .toSet(),
-                  ),
+                : _errorMessage.isNotEmpty
+                    ? Center(child: Text(_errorMessage))
+                    : _currentPosition == null
+                        ? const Center(child: Text('Location not available'))
+                        : GoogleMap(
+                            onMapCreated: (controller) => _mapController = controller,
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                              zoom: 14,
+                            ),
+                            markers: _nearbyPlaces
+                                .map((place) => Marker(
+                                      markerId: MarkerId(place.name),
+                                      position: LatLng(place.latitude, place.longitude),
+                                      infoWindow: InfoWindow(title: place.name, snippet: place.type),
+                                    ))
+                                .toSet(),
+                          ),
           ),
           
           // Category Filter
@@ -155,30 +189,32 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
           
           // List View
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _nearbyPlaces.length,
-              itemBuilder: (context, index) {
-                final place = _nearbyPlaces[index];
-                if (_selectedCategory == 'All' || _selectedCategory == place.type) {
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: ListTile(
-                      title: Text(place.name),
-                      subtitle: Text(place.type),
-                      trailing: IconButton(
-                        icon: Icon(Icons.directions),
-                        onPressed: () {
-                          _launchMapsUrl(place.latitude, place.longitude);
-                        },
-                      ),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            ),
+            child: _nearbyPlaces.isEmpty
+                ? Center(child: Text(_errorMessage.isEmpty ? 'No places found' : _errorMessage))
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _nearbyPlaces.length,
+                    itemBuilder: (context, index) {
+                      final place = _nearbyPlaces[index];
+                      if (_selectedCategory == 'All' || _selectedCategory == place.type) {
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: ListTile(
+                            title: Text(place.name),
+                            subtitle: Text(place.type),
+                            trailing: IconButton(
+                              icon: Icon(Icons.directions),
+                              onPressed: () {
+                                _launchMapsUrl(place.latitude, place.longitude);
+                              },
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
           ),
         ],
       ),
@@ -190,7 +226,10 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
-      throw 'Could not launch $url';
+      print('Could not launch $url');
+      setState(() {
+        _errorMessage = 'Could not launch maps';
+      });
     }
   }
 }

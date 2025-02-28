@@ -111,7 +111,7 @@
     },
     {
       "name": "flutter_plugin_android_lifecycle",
-      "rootUri": "file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.24",
+      "rootUri": "file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.25",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -416,7 +416,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-02-27T17:42:17.947970Z",
+  "generated": "2025-02-28T12:16:01.205762Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///D:/1%20Samadhi%20UNI/SDGP/SDGP-PawRescue/.dart_tool/flutter",
