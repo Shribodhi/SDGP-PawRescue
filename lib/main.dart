@@ -13,11 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Colors.blue,
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
-        ),
+        primaryColor: Colors.blue, // Global primary color
+        scaffoldBackgroundColor: Colors.white,
       ),
       home: const LoginPage(),
     );
