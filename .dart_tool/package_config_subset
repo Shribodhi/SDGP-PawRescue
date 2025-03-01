@@ -67,9 +67,9 @@ flutter_lints
 file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-4.0.0/
 file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-4.0.0/lib/
 flutter_plugin_android_lifecycle
-3.5
-file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.25/
-file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.25/lib/
+2.19
+file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.16/
+file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.16/lib/
 geolocator
 2.15
 file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/geolocator-10.1.1/
@@ -255,7 +255,7 @@ web
 file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.1/
 file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.1/lib/
 sdgp_pawrescue
-3.5
+3.6
 file:///D:/1%20Samadhi%20UNI/SDGP%20GIT%202/SDGP-PawRescue/
 file:///D:/1%20Samadhi%20UNI/SDGP%20GIT%202/SDGP-PawRescue/lib/
 sky_engine

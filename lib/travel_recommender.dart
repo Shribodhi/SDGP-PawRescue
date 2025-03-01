@@ -15,7 +15,7 @@ class TravelRecommenderPage extends StatefulWidget {
 class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
   GoogleMapController? _mapController;
   Position? _currentPosition;
-  List<Place> _nearbyPlaces = [];
+  final List<Place> _nearbyPlaces = [];
   String _selectedCategory = 'All';
   final List<String> _categories = ['All', 'Jogging Areas', 'Pharmacies', 'Veterinarians'];
   bool _isLoading = false;
@@ -71,8 +71,8 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
   Future<void> _getNearbyPlaces() async {
     if (_currentPosition == null) return;
 
-    final String apiKey = 'AIzaSyBN4ak6Umtd-Czy8eAlZ2oYT3b3iCDqvYY';
-    final String baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+    const String apiKey = 'AIzaSyBN4ak6Umtd-Czy8eAlZ2oYT3b3iCDqvYY';
+    const String baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
 
     List<String> types = ['park', 'pharmacy', 'veterinary_care'];
     _nearbyPlaces.clear();
@@ -135,7 +135,7 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
       body: Column(
         children: [
           // Map View
-          Container(
+          SizedBox(
             height: 300,
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -203,7 +203,7 @@ class _TravelRecommenderPageState extends State<TravelRecommenderPage> {
                             title: Text(place.name),
                             subtitle: Text(place.type),
                             trailing: IconButton(
-                              icon: Icon(Icons.directions),
+                              icon: const Icon(Icons.directions),
                               onPressed: () {
                                 _launchMapsUrl(place.latitude, place.longitude);
                               },
