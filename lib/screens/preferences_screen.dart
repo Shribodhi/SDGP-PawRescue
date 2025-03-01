@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../models/user_preferences.dart';
 
@@ -52,495 +53,583 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text(
-          'Pet Preferences',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        title: const Text(
+          'Select Pet Type',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 24,
+          ),
+        ),
         centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [backgroundColor, secondaryColor.withOpacity(0.5)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            colors: [
+              Colors.orange.shade800,
+              Colors.orange.shade500,
+              Colors.orange.shade300,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
         child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              _buildSectionHeader('Basic Information', Icons.pets),
-              const SizedBox(height: 16),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: ListView(
+              children: [
+                const SizedBox(height: 10),
 
-              // Pet Type Dropdown
-              _buildDropdown(
-                label: 'Pet Type',
-                value: _selectedPetType,
-                items: ['Dog', 'Cat', 'Bird', 'Rabbit', 'Hamster'],
-                onChanged: (value) => setState(() => _selectedPetType = value!),
-                icon: Icons.pets,
-              ),
+                // Pet Type Selection
+                _buildGlassyDropdown(
+                  label: 'Select Pet',
+                  value: _selectedPetType,
+                  items: ['Dog', 'Cat', 'Bird', 'Rabbit', 'Hamster'],
+                  onChanged: (value) =>
+                      setState(() => _selectedPetType = value!),
+                  icon: _getPetIcon(_selectedPetType),
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Pet Age Dropdown
-              _buildDropdown(
-                label: 'Pet Age',
-                value: _selectedPetAge,
-                items: ['Puppy/Kitten', 'Young', 'Adult', 'Senior'],
-                onChanged: (value) => setState(() => _selectedPetAge = value!),
-                icon: Icons.cake,
-              ),
+                // Health Condition Dropdown
+                _buildGlassyDropdown(
+                  label: 'Health Condition',
+                  value: _selectedHealthCondition,
+                  items: [
+                    'Healthy',
+                    'Overweight',
+                    'Underweight',
+                    'Sensitive Stomach',
+                    'Joint Issues'
+                  ],
+                  onChanged: (value) =>
+                      setState(() => _selectedHealthCondition = value!),
+                  icon: _getHealthIcon(_selectedHealthCondition),
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Health Condition Dropdown
-              _buildDropdown(
-                label: 'Health Condition',
-                value: _selectedHealthCondition,
-                items: [
-                  'Healthy',
-                  'Overweight',
-                  'Underweight',
-                  'Sensitive Stomach',
-                  'Joint Issues'
-                ],
-                onChanged: (value) =>
-                    setState(() => _selectedHealthCondition = value!),
-                icon: Icons.favorite,
-              ),
+                // Pet Age Dropdown
+                _buildGlassyDropdown(
+                  label: 'Pet Age',
+                  value: _selectedPetAge,
+                  items: ['Puppy/Kitten', 'Young', 'Adult', 'Senior'],
+                  onChanged: (value) =>
+                      setState(() => _selectedPetAge = value!),
+                  icon: Icons.cake,
+                ),
 
-              const SizedBox(height: 24),
-              _buildSectionHeader('Physical Attributes', Icons.fitness_center),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Weight Range Dropdown
-              _buildDropdown(
-                label: 'Weight Range',
-                value: _selectedWeightRange,
-                items: [
-                  'Small (<10kg)',
-                  'Medium (10-25kg)',
-                  'Large (25-40kg)',
-                  'Extra Large (>40kg)'
-                ],
-                onChanged: (value) =>
-                    setState(() => _selectedWeightRange = value!),
-                icon: Icons.monitor_weight_outlined,
-              ),
+                // Weight Range Dropdown
+                _buildGlassyDropdown(
+                  label: 'Weight Range',
+                  value: _selectedWeightRange,
+                  items: [
+                    'Small (<10kg)',
+                    'Medium (10-25kg)',
+                    'Large (25-40kg)',
+                    'Extra Large (>40kg)'
+                  ],
+                  onChanged: (value) =>
+                      setState(() => _selectedWeightRange = value!),
+                  icon: Icons.monitor_weight_outlined,
+                ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Activity Level Dropdown
-              _buildDropdown(
-                label: 'Activity Level',
-                value: _selectedActivityLevel,
-                items: ['Low', 'Medium', 'High', 'Very Active'],
-                onChanged: (value) =>
-                    setState(() => _selectedActivityLevel = value!),
-                icon: Icons.directions_run,
-              ),
+                // Activity Level Dropdown
+                _buildGlassyDropdown(
+                  label: 'Activity Level',
+                  value: _selectedActivityLevel,
+                  items: ['Low', 'Medium', 'High', 'Very Active'],
+                  onChanged: (value) =>
+                      setState(() => _selectedActivityLevel = value!),
+                  icon: Icons.directions_run,
+                ),
 
-              const SizedBox(height: 24),
-              _buildSectionHeader('Dietary Preferences', Icons.restaurant_menu),
-              const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-              // Allergies Multi-Select
-              _buildChipSelector(
-                label: 'Select Allergies',
-                options: _availableAllergies,
-                selectedOptions: _selectedAllergies,
-                icon: Icons.health_and_safety,
-              ),
+                // Allergies Multi-Select
+                _buildGlassyChipSelector(
+                  label: 'Allergies',
+                  options: _availableAllergies,
+                  selectedOptions: _selectedAllergies,
+                ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              // Dietary Preferences Multi-Select
-              _buildChipSelector(
-                label: 'Dietary Preferences',
-                options: _dietaryOptions,
-                selectedOptions: _selectedDietaryPreferences,
-                icon: Icons.set_meal,
-              ),
+                // Dietary Preferences Multi-Select
+                _buildGlassyChipSelector(
+                  label: 'Dietary Preferences',
+                  options: _dietaryOptions,
+                  selectedOptions: _selectedDietaryPreferences,
+                ),
 
-              const SizedBox(height: 24),
-              _buildSectionHeader('Additional Options', Icons.tune),
-              const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
-              // Toggle Buttons
-              _buildToggleOption(
-                label: 'Include Treats',
-                value: _includeTreats,
-                onChanged: (value) => setState(() => _includeTreats = value),
-                icon: Icons.icecream,
-              ),
+                // Toggle Buttons
+                _buildGlassyToggle(
+                  label: 'Include Treats',
+                  value: _includeTreats,
+                  onChanged: (value) => setState(() => _includeTreats = value),
+                ),
 
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-              _buildToggleOption(
-                label: 'Budget-Friendly Options Only',
-                value: _budgetFriendly,
-                onChanged: (value) => setState(() => _budgetFriendly = value),
-                icon: Icons.attach_money,
-              ),
+                _buildGlassyToggle(
+                  label: 'Budget-Friendly Only',
+                  value: _budgetFriendly,
+                  onChanged: (value) => setState(() => _budgetFriendly = value),
+                ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              // Portion Size Slider
-              _buildSlider(
-                label: 'Portion Size',
-                value: _portionSize,
-                min: 0.5,
-                max: 5.0,
-                divisions: 9,
-                onChanged: (value) => setState(() => _portionSize = value),
-                icon: Icons.dinner_dining,
-              ),
+                // Portion Size Slider
+                _buildGlassySlider(
+                  label: 'Portion Size',
+                  value: _portionSize,
+                  min: 0.5,
+                  max: 5.0,
+                  divisions: 9,
+                  onChanged: (value) => setState(() => _portionSize = value),
+                ),
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 30),
 
-              // Save Button
-              _buildSaveButton(),
+                // Get Recommendation Button
+                _buildGlowingButton(),
 
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, color: primaryColor, size: 24),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: primaryColor,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Divider(color: primaryColor.withOpacity(0.5), thickness: 1),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdown({
+  Widget _buildGlassyDropdown({
     required String label,
     required String value,
     required List<String> items,
     required Function(String?) onChanged,
     required IconData icon,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Row(
-            children: [
-              Icon(icon, size: 16, color: primaryColor),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[800],
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white.withOpacity(0.2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 1.5,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: value,
+                      dropdownColor: Colors.orange.shade300.withOpacity(0.9),
+                      icon: const Icon(Icons.arrow_drop_down,
+                          color: Colors.white),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      onChanged: onChanged,
+                      items: items
+                          .map((item) => DropdownMenuItem(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ))
+                          .toList(),
+                      hint: Text(
+                        label,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value,
-            isExpanded: true,
-            decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              border: InputBorder.none,
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.shade200),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: primaryColor),
-              ),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ],
             ),
-            icon: Icon(Icons.arrow_drop_down, color: primaryColor),
-            dropdownColor: Colors.white,
-            onChanged: onChanged,
-            items: items
-                .map((item) => DropdownMenuItem(
-                      value: item,
-                      child: Text(item),
-                    ))
-                .toList(),
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildChipSelector({
+  Widget _buildGlassyChipSelector({
     required String label,
     required List<String> options,
     required List<String> selectedOptions,
-    required IconData icon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Row(
-            children: [
-              Icon(icon, size: 16, color: primaryColor),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[800],
-                ),
-              ),
-            ],
+          padding: const EdgeInsets.only(left: 8, bottom: 8),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white.withOpacity(0.2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 1,
               ),
             ],
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+              width: 1.5,
+            ),
           ),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: options.map((option) {
-              final isSelected = selectedOptions.contains(option);
-              return FilterChip(
-                label: Text(option),
-                selected: isSelected,
-                checkmarkColor: Colors.white,
-                selectedColor: primaryColor,
-                labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-                backgroundColor: Colors.grey.shade100,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                onSelected: (selected) {
-                  setState(() {
-                    if (selected) {
-                      selectedOptions.add(option);
-                    } else {
-                      selectedOptions.remove(option);
-                    }
-                  });
-                },
-              );
-            }).toList(),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: options.map((option) {
+                  final isSelected = selectedOptions.contains(option);
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          selectedOptions.remove(option);
+                        } else {
+                          selectedOptions.add(option);
+                        }
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? Colors.orange.shade600.withOpacity(0.8)
+                            : Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.5),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildToggleOption({
+  Widget _buildGlassyToggle({
     required String label,
     required bool value,
     required Function(bool) onChanged,
-    required IconData icon,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white.withOpacity(0.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 1,
           ),
         ],
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 1.5,
+        ),
       ),
-      child: Row(
-        children: [
-          Icon(icon, color: primaryColor, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
+              Switch(
+                value: value,
+                onChanged: onChanged,
+                activeColor: Colors.orange.shade600,
+                activeTrackColor: Colors.white.withOpacity(0.5),
+                inactiveThumbColor: Colors.white,
+                inactiveTrackColor: Colors.white.withOpacity(0.3),
+              ),
+            ],
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: primaryColor,
-            activeTrackColor: secondaryColor,
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildSlider({
+  Widget _buildGlassySlider({
     required String label,
     required double value,
     required double min,
     required double max,
     required int divisions,
     required Function(double) onChanged,
-    required IconData icon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Row(
-            children: [
-              Icon(icon, size: 16, color: primaryColor),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[800],
-                ),
-              ),
-            ],
+          padding: const EdgeInsets.only(left: 8, bottom: 8),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white.withOpacity(0.2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 1,
               ),
             ],
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+              width: 1.5,
+            ),
           ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Column(
                 children: [
-                  const Text('Small'),
-                  Text(
-                    '${value.toStringAsFixed(1)} cups',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Small',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade600.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${value.toStringAsFixed(1)} cups',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        'Large',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  SliderTheme(
+                    data: SliderThemeData(
+                      activeTrackColor: Colors.white,
+                      inactiveTrackColor: Colors.white.withOpacity(0.3),
+                      thumbColor: Colors.orange.shade600,
+                      overlayColor: Colors.orange.withOpacity(0.2),
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 12),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 20),
+                    ),
+                    child: Slider(
+                      value: value,
+                      min: min,
+                      max: max,
+                      divisions: divisions,
+                      onChanged: onChanged,
                     ),
                   ),
-                  const Text('Large'),
                 ],
               ),
-              Slider(
-                value: value,
-                min: min,
-                max: max,
-                divisions: divisions,
-                activeColor: primaryColor,
-                inactiveColor: secondaryColor,
-                label: '${value.toStringAsFixed(1)} cups',
-                onChanged: onChanged,
-              ),
-            ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSaveButton() {
-    return ElevatedButton(
-      onPressed: () {
-        widget.onSave(UserPreferences(
-          petType: _selectedPetType,
-          healthCondition: _selectedHealthCondition,
-          petAge: _selectedPetAge,
-          weightRange: _selectedWeightRange,
-          activityLevel: _selectedActivityLevel,
-          allergies: _selectedAllergies,
-          dietaryPreferences: _selectedDietaryPreferences,
-          includeTreats: _includeTreats,
-          budgetFriendly: _budgetFriendly,
-          portionSize: _portionSize,
-        ));
-        Navigator.pop(context);
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 4,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.save),
-          const SizedBox(width: 8),
-          Text(
-            'Save Preferences',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-            ),
+  Widget _buildGlowingButton() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.orange.shade700.withOpacity(0.6),
+            blurRadius: 15,
+            spreadRadius: 2,
           ),
         ],
       ),
+      child: ElevatedButton(
+        onPressed: () {
+          widget.onSave(UserPreferences(
+            petType: _selectedPetType,
+            healthCondition: _selectedHealthCondition,
+            petAge: _selectedPetAge,
+            weightRange: _selectedWeightRange,
+            activityLevel: _selectedActivityLevel,
+            allergies: _selectedAllergies,
+            dietaryPreferences: _selectedDietaryPreferences,
+            includeTreats: _includeTreats,
+            budgetFriendly: _budgetFriendly,
+            portionSize: _portionSize,
+          ));
+          Navigator.pop(context);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange.shade600,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          elevation: 0,
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.pets, size: 24),
+            SizedBox(width: 8),
+            Text(
+              'Get Recommendation',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
+  }
+
+  IconData _getPetIcon(String petType) {
+    switch (petType) {
+      case 'Dog':
+        return Icons.pets;
+      case 'Cat':
+        return Icons.pets;
+      case 'Bird':
+        return Icons.flutter_dash;
+      case 'Rabbit':
+        return Icons.pets;
+      case 'Hamster':
+        return Icons.pets;
+      default:
+        return Icons.pets;
+    }
+  }
+
+  IconData _getHealthIcon(String condition) {
+    switch (condition) {
+      case 'Healthy':
+        return Icons.favorite;
+      case 'Overweight':
+        return Icons.monitor_weight;
+      case 'Underweight':
+        return Icons.fitness_center;
+      case 'Sensitive Stomach':
+        return Icons.sick;
+      case 'Joint Issues':
+        return Icons.accessibility;
+      default:
+        return Icons.favorite;
+    }
   }
 }
