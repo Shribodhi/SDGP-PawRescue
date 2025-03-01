@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
+import 'screens/preferences_screen.dart'; // Import your screen
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +13,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Colors.blue, // Global primary color
+        primaryColor: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const LoginPage(),
+      home: PreferencesScreen(
+        onSave: (prefs) {}, // Dummy function to avoid errors
+      ), // Directly start from Preferences Screen
     );
   }
 }

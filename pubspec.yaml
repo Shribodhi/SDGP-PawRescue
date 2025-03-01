@@ -57,6 +57,7 @@ flutter:
     - assets/injured.png
     - assets/animal_profiles.png
     - assets/medi_center.png
+    - assets/food_icon.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

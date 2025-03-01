@@ -11,84 +11,75 @@ class PreferencesScreen extends StatefulWidget {
 }
 
 class _PreferencesScreenState extends State<PreferencesScreen> {
-  String selectedAnimalType = 'Dog';
-  String selectedDietType = 'Vegetarian';
-  String selectedHealthCondition = 'None';
+  String _selectedPetType = 'Dog';
+  String _selectedHealthCondition = 'Healthy';
+  String _selectedPetAge = 'Young';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Pet Preferences'),
         backgroundColor: Colors.orange,
-        title: const Text('Food Preferences'),
-        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            DropdownButtonFormField(
-              value: selectedAnimalType,
+            DropdownButton<String>(
+              value: _selectedPetType,
+              onChanged: (value) {
+                setState(() {
+                  _selectedPetType = value!;
+                });
+              },
               items: ['Dog', 'Cat', 'Bird']
-                  .map((animal) => DropdownMenuItem(
-                        value: animal,
-                        child: Text(animal),
+                  .map((pet) => DropdownMenuItem(
+                        value: pet,
+                        child: Text(pet),
                       ))
                   .toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedAnimalType = value!;
-                });
-              },
-              decoration:
-                  const InputDecoration(labelText: 'Select Animal Type'),
             ),
             const SizedBox(height: 20),
-            DropdownButtonFormField(
-              value: selectedDietType,
-              items: ['Vegetarian', 'Non-Vegetarian', 'Mixed']
-                  .map((diet) => DropdownMenuItem(
-                        value: diet,
-                        child: Text(diet),
-                      ))
-                  .toList(),
+            DropdownButton<String>(
+              value: _selectedHealthCondition,
               onChanged: (value) {
                 setState(() {
-                  selectedDietType = value!;
+                  _selectedHealthCondition = value!;
                 });
               },
-              decoration: const InputDecoration(labelText: 'Select Diet Type'),
-            ),
-            const SizedBox(height: 20),
-            DropdownButtonFormField(
-              value: selectedHealthCondition,
-              items: ['None', 'Diabetes', 'Obesity']
+              items: ['Healthy', 'Sick', 'Obese']
                   .map((condition) => DropdownMenuItem(
                         value: condition,
                         child: Text(condition),
                       ))
                   .toList(),
+            ),
+            const SizedBox(height: 20),
+            DropdownButton<String>(
+              value: _selectedPetAge,
               onChanged: (value) {
                 setState(() {
-                  selectedHealthCondition = value!;
+                  _selectedPetAge = value!;
                 });
               },
-              decoration:
-                  const InputDecoration(labelText: 'Select Health Condition'),
+              items: ['Young', 'Adult', 'Senior']
+                  .map((age) => DropdownMenuItem(
+                        value: age,
+                        child: Text(age),
+                      ))
+                  .toList(),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
                 widget.onSave(UserPreferences(
-                  animalType: selectedAnimalType,
-                  dietType: selectedDietType,
-                  healthCondition: selectedHealthCondition,
-                ));
+                    petType: _selectedPetType,
+                    petAge: _selectedPetAge,
+                    healthCondition: _selectedHealthCondition));
                 Navigator.pop(context);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
               child: const Text('Save Preferences'),
             ),
           ],

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'shop_page.dart'; // Import the shop page
-import 'preferences_screen.dart'; // Import the preferences screen
+import 'screens/preferences_screen.dart'; // Import the preferences screen
+import 'models/user_preferences.dart'; // Import user preferences model
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  UserPreferences? _userPreferences;
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +57,21 @@ class HomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            PreferencesScreen()), // Navigate to Food Recommendation
+                        builder: (context) => PreferencesScreen(
+                              onSave: (UserPreferences preferences) {
+                                setState(() {
+                                  _userPreferences = preferences;
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FoodRecommendationScreen(
+                                            preferences: _userPreferences!),
+                                  ),
+                                );
+                              },
+                            )), // Navigate to Food Recommendation
                   );
                 }),
               ],
@@ -90,10 +111,7 @@ class HomePage extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap ??
-            () {
-              // Add navigation or functionality for other grid items
-            },
+        onTap: onTap ?? () {},
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
