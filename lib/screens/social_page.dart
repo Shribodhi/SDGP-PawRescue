@@ -66,53 +66,20 @@ class _SocialPageState extends State<SocialPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // Stories section
-          Container(
-            height: 100,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 8,
-              itemBuilder: (context, index) {
-                return index == 0
-                    ? _buildAddStoryItem()
-                    : _buildStoryItem('User $index');
-              },
-            ),
-          ),
-          
-          // Posts list
-          Expanded(
-            child: RefreshIndicator(
-              color: const Color(0xFF219EBC),
-              onRefresh: () async {
-                // Simulate refresh
-                await Future.delayed(const Duration(seconds: 1));
-                setState(() {});
-              },
-              child: ListView.builder(
-                itemCount: _posts.length,
-                itemBuilder: (context, index) {
-                  final post = _posts[index];
-                  return _buildPostCard(post);
-                },
-              ),
-            ),
-          ),
-        ],
+      body: RefreshIndicator(
+        color: const Color(0xFF219EBC),
+        onRefresh: () async {
+          // Simulate refresh
+          await Future.delayed(const Duration(seconds: 1));
+          setState(() {});
+        },
+        child: ListView.builder(
+          itemCount: _posts.length,
+          itemBuilder: (context, index) {
+            final post = _posts[index];
+            return _buildPostCard(post);
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -124,76 +91,6 @@ class _SocialPageState extends State<SocialPage> {
     );
   }
 
-  Widget _buildAddStoryItem() {
-    return Container(
-      width: 70,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.add,
-              color: Color(0xFF219EBC),
-              size: 30,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Add Story',
-            style: TextStyle(fontSize: 12),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStoryItem(String username) {
-    return Container(
-      width: 70,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF8ECAE6), Color(0xFF219EBC)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-            ),
-            padding: const EdgeInsets.all(2),
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              padding: const EdgeInsets.all(2),
-              child: const CircleAvatar(
-                backgroundColor: Colors.grey,
-                child: Icon(Icons.person, color: Colors.white),
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            username,
-            style: const TextStyle(fontSize: 12),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildPostCard(Map<String, dynamic> post) {
     return Card(
@@ -882,4 +779,6 @@ class _SocialPageState extends State<SocialPage> {
     );
   }
 }
+
+
 
