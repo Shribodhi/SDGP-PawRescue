@@ -3,6 +3,7 @@ import 'screens/profile_page.dart';
 import 'screens/pets_page.dart';
 import 'screens/shop_page.dart';
 import 'screens/adopt_page.dart';
+import 'screens/social_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const HomeContent(),
     const PetsPage(),
+    const SocialPage(),
     const ShopPage(),
     const AdoptPage(),
     const ProfilePage(),
@@ -49,6 +51,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.pets),
             label: 'My Pets',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Social',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
@@ -158,6 +164,18 @@ class HomeContent extends StatelessWidget {
                 ),
                 _buildFeatureCard(
                   context,
+                  'Social Feed',
+                  Icons.people,
+                  Colors.blue,
+                  () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SocialPage()));
+                  },
+                ),
+                _buildFeatureCard(
+                  context,
                   'Shop Products',
                   Icons.shopping_bag,
                   Colors.green,
@@ -178,18 +196,6 @@ class HomeContent extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => const AdoptPage()));
-                  },
-                ),
-                _buildFeatureCard(
-                  context,
-                  'My Profile',
-                  Icons.person,
-                  Colors.purple,
-                  () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProfilePage()));
                   },
                 ),
               ],
@@ -266,3 +272,4 @@ class HomeContent extends StatelessWidget {
     );
   }
 }
+
