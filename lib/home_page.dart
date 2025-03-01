@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'shop_page.dart'; // Import the shop page
+import 'preferences_screen.dart'; // Import the preferences screen
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -27,13 +28,29 @@ class HomePage extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               children: [
-                _buildClickableGridItem(context, 'Treatment History', 'assets/treatment.png'),
-                _buildClickableGridItem(context, 'Animal Profiles', 'assets/animal_profiles.png'),
-                _buildClickableGridItem(context, 'Medi-Center', 'assets/medi_center.png'),
-                _buildClickableGridItem(context, 'Shop', 'assets/shop.png', onTap: () {
+                _buildClickableGridItem(
+                    context, 'Treatment History', 'assets/treatment.png'),
+                _buildClickableGridItem(
+                    context, 'Animal Profiles', 'assets/animal_profiles.png'),
+                _buildClickableGridItem(
+                    context, 'Medi-Center', 'assets/medi_center.png'),
+                _buildClickableGridItem(context, 'Shop', 'assets/shop.png',
+                    onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ShopPage()), // Navigate to Shop page
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const ShopPage()), // Navigate to Shop page
+                  );
+                }),
+                _buildClickableGridItem(
+                    context, 'Food Recommendation', 'assets/food_icon.png',
+                    onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            PreferencesScreen()), // Navigate to Food Recommendation
                   );
                 }),
               ],
@@ -67,13 +84,16 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildClickableGridItem(BuildContext context, String title, String imagePath, {Function()? onTap}) {
+  Widget _buildClickableGridItem(
+      BuildContext context, String title, String imagePath,
+      {Function()? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap ?? () {
-          // Add navigation or functionality for other grid items
-        },
+        onTap: onTap ??
+            () {
+              // Add navigation or functionality for other grid items
+            },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
