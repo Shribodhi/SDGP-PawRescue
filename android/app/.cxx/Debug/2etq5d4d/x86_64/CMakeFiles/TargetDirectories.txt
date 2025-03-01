@@ -1,0 +1,2 @@
+C:/SDGP REPO 1.0/SDGP-PawRescue/android/app/.cxx/Debug/2etq5d4d/x86_64/CMakeFiles/edit_cache.dir
+C:/SDGP REPO 1.0/SDGP-PawRescue/android/app/.cxx/Debug/2etq5d4d/x86_64/CMakeFiles/rebuild_cache.dir
