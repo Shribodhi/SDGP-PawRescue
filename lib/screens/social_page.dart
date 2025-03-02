@@ -8,6 +8,7 @@ class SocialPage extends StatefulWidget {
 }
 
 class _SocialPageState extends State<SocialPage> {
+  String _currentFilter = 'All';
   final List<Map<String, dynamic>> _posts = [
     {
       'id': 1,
@@ -16,6 +17,7 @@ class _SocialPageState extends State<SocialPage> {
       'timeAgo': '2 hours ago',
       'content': 'Just adopted this beautiful puppy! Meet Max, my new family member. He\'s a 3-month-old Golden Retriever and already loves playing fetch!',
       'image': 'assets/images/post_dog1.png',
+      'video': null,
       'likes': 42,
       'comments': 8,
       'reactions': {
@@ -34,6 +36,7 @@ class _SocialPageState extends State<SocialPage> {
       'timeAgo': '5 hours ago',
       'content': 'Luna enjoying her new cat tree! Best purchase ever. She hasn\'t stopped climbing since we set it up this morning.',
       'image': 'assets/images/post_cat1.png',
+      'video': null,
       'likes': 28,
       'comments': 5,
       'reactions': {
@@ -52,6 +55,7 @@ class _SocialPageState extends State<SocialPage> {
       'timeAgo': '1 day ago',
       'content': 'First visit to the vet went well! Rocky is healthy and happy. The vet said he\'s growing perfectly and his vaccinations are up to date.',
       'image': 'assets/images/post_dog2.png',
+      'video': null,
       'likes': 56,
       'comments': 12,
       'reactions': {
@@ -70,6 +74,7 @@ class _SocialPageState extends State<SocialPage> {
       'timeAgo': '2 days ago',
       'content': 'Mittens and her new toy! She\'s been playing with it non-stop. Any recommendations for other toys that cats love?',
       'image': 'assets/images/post_cat2.png',
+      'video': null,
       'likes': 35,
       'comments': 15,
       'reactions': {
@@ -81,25 +86,57 @@ class _SocialPageState extends State<SocialPage> {
       },
       'isLiked': false,
     },
+    {
+      'id': 5,
+      'username': 'Alex Thompson',
+      'userImage': 'assets/images/user5.png',
+      'timeAgo': '3 days ago',
+      'content': 'Check out this cute video of my cat playing with a new toy!',
+      'image': null,
+      'video': 'assets/videos/cat_playing.mp4',
+      'likes': 62,
+      'comments': 18,
+      'reactions': {
+        'love': 25,
+        'wow': 12,
+        'laugh': 20,
+        'sad': 0,
+        'angry': 0,
+      },
+      'isLiked': false,
+    },
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        color: const Color(0xFF219EBC),
-        onRefresh: () async {
-          // Simulate refresh
-          await Future.delayed(const Duration(seconds: 1));
-          setState(() {});
-        },
-        child: ListView.builder(
-          itemCount: _posts.length,
-          itemBuilder: (context, index) {
-            final post = _posts[index];
-            return _buildPostCard(post);
-          },
-        ),
+      body: Column(
+        children: [
+          _buildFilterButtons(),
+          Expanded(
+            child: RefreshIndicator(
+              color: const Color(0xFF219EBC),
+              onRefresh: () async {
+                // Simulate refresh
+                await Future.delayed(const Duration(seconds: 1));
+                setState(() {});
+              },
+              child: ListView.builder(
+                itemCount: _posts.length,
+                itemBuilder: (context, index) {
+                  final post = _posts[index];
+                  if (_currentFilter == 'All' ||
+                      (_currentFilter == 'Photos' && post['image'] != null) ||
+                      (_currentFilter == 'Videos' && post['video'] != null)) {
+                    return _buildPostCard(post);
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -173,20 +210,35 @@ class _SocialPageState extends State<SocialPage> {
               ),
             ),
 
-          // Post image
-          Container(
-            height: 300,
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            color: Colors.grey[300],
-            child: const Center(
-              child: Icon(
-                Icons.pets,
-                size: 80,
-                color: Colors.white,
+          // Post media (image or video)
+          if (post['image'] != null)
+            Container(
+              height: 300,
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              color: Colors.grey[300],
+              child: const Center(
+                child: Icon(
+                  Icons.image,
+                  size: 80,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          else if (post['video'] != null)
+            Container(
+              height: 300,
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              color: Colors.grey[300],
+              child: const Center(
+                child: Icon(
+                  Icons.play_circle_filled,
+                  size: 80,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
 
           // Reactions
           _buildReactionsBar(post),
@@ -281,26 +333,6 @@ class _SocialPageState extends State<SocialPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: const Icon(Icons.bookmark_border),
-                title: const Text('Save Post'),
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Post saved'),
-                      duration: Duration(seconds: 1),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.report_outlined),
-                title: const Text('Report Post'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
               ListTile(
                 leading: const Icon(Icons.share),
                 title: const Text('Share Post'),
@@ -706,6 +738,7 @@ class _SocialPageState extends State<SocialPage> {
                             'timeAgo': 'Just now',
                             'content': contentController.text,
                             'image': '',
+                            'video': null,
                             'likes': 0,
                             'comments': 0,
                             'reactions': {
@@ -786,7 +819,38 @@ class _SocialPageState extends State<SocialPage> {
       ),
     );
   }
+
+  Widget _buildFilterButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildFilterButton('All'),
+          _buildFilterButton('Photos'),
+          _buildFilterButton('Videos'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterButton(String filter) {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          _currentFilter = filter;
+        });
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _currentFilter == filter ? const Color(0xFF219EBC) : Colors.grey[300],
+        foregroundColor: _currentFilter == filter ? Colors.white : Colors.black,
+      ),
+      child: Text(filter),
+    );
+  }
 }
+
+
 
 
 
