@@ -18,9 +18,14 @@ class _SocialPageState extends State<SocialPage> {
       'image': 'assets/images/post_dog1.png',
       'likes': 42,
       'comments': 8,
-      'rating': 4.5,
+      'reactions': {
+        'love': 20,
+        'wow': 15,
+        'laugh': 5,
+        'sad': 0,
+        'angry': 0,
+      },
       'isLiked': false,
-      'userRating': 0,
     },
     {
       'id': 2,
@@ -31,9 +36,14 @@ class _SocialPageState extends State<SocialPage> {
       'image': 'assets/images/post_cat1.png',
       'likes': 28,
       'comments': 5,
-      'rating': 4.2,
+      'reactions': {
+        'love': 15,
+        'wow': 8,
+        'laugh': 3,
+        'sad': 0,
+        'angry': 0,
+      },
       'isLiked': false,
-      'userRating': 0,
     },
     {
       'id': 3,
@@ -44,9 +54,14 @@ class _SocialPageState extends State<SocialPage> {
       'image': 'assets/images/post_dog2.png',
       'likes': 56,
       'comments': 12,
-      'rating': 4.8,
+      'reactions': {
+        'love': 30,
+        'wow': 18,
+        'laugh': 5,
+        'sad': 0,
+        'angry': 0,
+      },
       'isLiked': false,
-      'userRating': 0,
     },
     {
       'id': 4,
@@ -57,9 +72,14 @@ class _SocialPageState extends State<SocialPage> {
       'image': 'assets/images/post_cat2.png',
       'likes': 35,
       'comments': 15,
-      'rating': 4.0,
+      'reactions': {
+        'love': 18,
+        'wow': 10,
+        'laugh': 5,
+        'sad': 0,
+        'angry': 0,
+      },
       'isLiked': false,
-      'userRating': 0,
     },
   ];
 
@@ -90,7 +110,6 @@ class _SocialPageState extends State<SocialPage> {
       ),
     );
   }
-
 
   Widget _buildPostCard(Map<String, dynamic> post) {
     return Card(
@@ -169,60 +188,8 @@ class _SocialPageState extends State<SocialPage> {
             ),
           ),
 
-          // Rating
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                const Text(
-                  'Rate this post:',
-                  style: TextStyle(fontSize: 14),
-                ),
-                const SizedBox(width: 10),
-                Row(
-                  children: List.generate(5, (index) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          post['userRating'] = index + 1;
-                        });
-                      },
-                      child: Icon(
-                        index < post['userRating'] ? Icons.star : Icons.star_border,
-                        color: Colors.amber,
-                        size: 24,
-                      ),
-                    );
-                  }),
-                ),
-                const Spacer(),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      post['rating'].toString(),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Text(
-                      ' (Rating)',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // Reactions
+          _buildReactionsBar(post),
 
           const Divider(),
 
@@ -367,7 +334,7 @@ class _SocialPageState extends State<SocialPage> {
 
   void _showComments(BuildContext context, Map<String, dynamic> post) {
     final commentController = TextEditingController();
-    
+
     // Sample comments
     final List<Map<String, dynamic>> comments = [
       {
@@ -588,7 +555,7 @@ class _SocialPageState extends State<SocialPage> {
 
   void _showCreatePostModal(BuildContext context) {
     final contentController = TextEditingController();
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -741,9 +708,14 @@ class _SocialPageState extends State<SocialPage> {
                             'image': '',
                             'likes': 0,
                             'comments': 0,
-                            'rating': 0.0,
+                            'reactions': {
+                              'love': 0,
+                              'wow': 0,
+                              'laugh': 0,
+                              'sad': 0,
+                              'angry': 0,
+                            },
                             'isLiked': false,
-                            'userRating': 0,
                           });
                         });
                         Navigator.pop(context);
@@ -778,7 +750,44 @@ class _SocialPageState extends State<SocialPage> {
       },
     );
   }
+
+  Widget _buildReactionsBar(Map<String, dynamic> post) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildReactionButton(post, 'love', '❤️'),
+          _buildReactionButton(post, 'wow', '😮'),
+          _buildReactionButton(post, 'laugh', '😂'),
+          _buildReactionButton(post, 'sad', '😢'),
+          _buildReactionButton(post, 'angry', '😠'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReactionButton(Map<String, dynamic> post, String reaction, String emoji) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          post['reactions'][reaction]++;
+        });
+      },
+      child: Column(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 24)),
+          const SizedBox(height: 4),
+          Text(
+            '${post['reactions'][reaction]}',
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
 
 
 
