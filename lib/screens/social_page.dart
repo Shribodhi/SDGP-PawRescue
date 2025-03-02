@@ -28,25 +28,27 @@ class _SocialPageState extends State<SocialPage> {
         'angry': 0,
       },
       'isLiked': false,
+      'type': 'normal',
     },
     {
       'id': 2,
       'username': 'Michael Smith',
       'userImage': 'assets/images/user2.png',
       'timeAgo': '5 hours ago',
-      'content': 'Luna enjoying her new cat tree! Best purchase ever. She hasn\'t stopped climbing since we set it up this morning.',
-      'image': 'assets/images/post_cat1.png',
+      'content': 'LOST DOG: Brown Labrador, answers to "Buddy". Last seen near Central Park. Please contact if found!',
+      'image': 'assets/images/lost_dog.png',
       'video': null,
       'likes': 28,
       'comments': 5,
       'reactions': {
-        'love': 15,
-        'wow': 8,
-        'laugh': 3,
-        'sad': 0,
+        'love': 0,
+        'wow': 0,
+        'laugh': 0,
+        'sad': 15,
         'angry': 0,
       },
       'isLiked': false,
+      'type': 'lost_found',
     },
     {
       'id': 3,
@@ -66,6 +68,7 @@ class _SocialPageState extends State<SocialPage> {
         'angry': 0,
       },
       'isLiked': false,
+      'type': 'normal',
     },
     {
       'id': 4,
@@ -85,6 +88,7 @@ class _SocialPageState extends State<SocialPage> {
         'angry': 0,
       },
       'isLiked': false,
+      'type': 'normal',
     },
     {
       'id': 5,
@@ -104,6 +108,7 @@ class _SocialPageState extends State<SocialPage> {
         'angry': 0,
       },
       'isLiked': false,
+      'type': 'normal',
     },
   ];
 
@@ -190,6 +195,22 @@ class _SocialPageState extends State<SocialPage> {
                     ],
                   ),
                 ),
+                if (post['type'] == 'lost_found')
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red[100],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Lost & Found',
+                      style: TextStyle(
+                        color: Colors.red[800],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
                 IconButton(
                   icon: const Icon(Icons.more_horiz),
                   onPressed: () {
@@ -206,7 +227,10 @@ class _SocialPageState extends State<SocialPage> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               child: Text(
                 post['content'],
-                style: const TextStyle(fontSize: 14),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: post['type'] == 'lost_found' ? FontWeight.bold : FontWeight.normal,
+                ),
               ),
             ),
 
@@ -587,6 +611,7 @@ class _SocialPageState extends State<SocialPage> {
 
   void _showCreatePostModal(BuildContext context) {
     final contentController = TextEditingController();
+    String postType = 'normal';
 
     showModalBottomSheet(
       context: context,
@@ -595,190 +620,235 @@ class _SocialPageState extends State<SocialPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
       ),
       builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Column(
-            children: [
-              // Header
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Create Post',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-
-              // User info
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.grey[300],
-                      child: const Icon(Icons.person, color: Colors.white),
+              child: Column(
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Text(
-                          'Emma Johnson',
+                        const Text(
+                          'Create Post',
                           style: TextStyle(
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
                           ),
                         ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // User info and post type selection
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.grey[300],
+                              child: const Icon(Icons.person, color: Colors.white),
+                            ),
+                            const SizedBox(width: 10),
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Emma Johnson',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  'Public',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setModalState(() {
+                                    postType = 'normal';
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: postType == 'normal' ? const Color(0xFF219EBC) : Colors.grey[300],
+                                  foregroundColor: postType == 'normal' ? Colors.white : Colors.black,
+                                ),
+                                child: const Text('Normal Post'),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setModalState(() {
+                                    postType = 'lost_found';
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: postType == 'lost_found' ? Colors.red : Colors.grey[300],
+                                  foregroundColor: postType == 'lost_found' ? Colors.white : Colors.black,
+                                ),
+                                child: const Text('Lost & Found'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Post content
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: TextField(
+                        controller: contentController,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          hintText: postType == 'normal'
+                              ? 'What\'s on your mind?'
+                              : 'Describe the lost/found pet...',
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Image placeholder
+                  Container(
+                    height: 200,
+                    width: double.infinity,
+                    margin: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image,
+                          size: 50,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 10),
                         Text(
-                          'Public',
+                          'Add Photo',
                           style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                            color: Colors.grey[600],
+                            fontSize: 16,
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-
-              // Post content
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: TextField(
-                    controller: contentController,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      hintText: 'What\'s on your mind?',
-                      border: InputBorder.none,
-                    ),
                   ),
-                ),
-              ),
 
-              // Image placeholder
-              Container(
-                height: 200,
-                width: double.infinity,
-                margin: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.image,
-                      size: 50,
-                      color: Colors.grey[400],
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Add Photo',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Post button
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF219EBC),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: () {
-                      if (contentController.text.isNotEmpty) {
-                        setState(() {
-                          _posts.insert(0, {
-                            'id': _posts.length + 1,
-                            'username': 'Emma Johnson',
-                            'userImage': 'assets/images/user1.png',
-                            'timeAgo': 'Just now',
-                            'content': contentController.text,
-                            'image': '',
-                            'video': null,
-                            'likes': 0,
-                            'comments': 0,
-                            'reactions': {
-                              'love': 0,
-                              'wow': 0,
-                              'laugh': 0,
-                              'sad': 0,
-                              'angry': 0,
-                            },
-                            'isLiked': false,
-                          });
-                        });
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Post created successfully'),
-                            backgroundColor: Color(0xFF219EBC),
+                  // Post button
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF219EBC),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please add some content to your post'),
-                            backgroundColor: Colors.red,
+                        ),
+                        onPressed: () {
+                          if (contentController.text.isNotEmpty) {
+                            setState(() {
+                              _posts.insert(0, {
+                                'id': _posts.length + 1,
+                                'username': 'Emma Johnson',
+                                'userImage': 'assets/images/user1.png',
+                                'timeAgo': 'Just now',
+                                'content': contentController.text,
+                                'image': '',
+                                'video': null,
+                                'likes': 0,
+                                'comments': 0,
+                                'reactions': {
+                                  'love': 0,
+                                  'wow': 0,
+                                  'laugh': 0,
+                                  'sad': 0,
+                                  'angry': 0,
+                                },
+                                'isLiked': false,
+                                'type': postType,
+                              });
+                            });
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(postType == 'normal' ? 'Post created successfully' : 'Lost & Found post created'),
+                                backgroundColor: const Color(0xFF219EBC),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please add some content to your post'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          postType == 'normal' ? 'Post' : 'Post Lost & Found',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      }
-                    },
-                    child: const Text(
-                      'Post',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -849,6 +919,8 @@ class _SocialPageState extends State<SocialPage> {
     );
   }
 }
+
+
 
 
 
