@@ -4,6 +4,7 @@ import 'screens/pets_page.dart';
 import 'screens/shop_page.dart';
 import 'screens/adopt_page.dart';
 import 'screens/social_page.dart';
+import 'screens/pet_profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,6 +32,17 @@ class _HomePageState extends State<HomePage> {
         title: const Text('PawRescue'),
         backgroundColor: const Color(0xFF219EBC),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.pets),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PetProfilePage()),
+              );
+            },
+          ),
+        ],
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -272,4 +284,5 @@ class HomeContent extends StatelessWidget {
     );
   }
 }
+
 

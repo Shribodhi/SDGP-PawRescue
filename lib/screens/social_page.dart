@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'pet_profile_page.dart';
 
 class SocialPage extends StatefulWidget {
   const SocialPage({super.key});
@@ -29,6 +30,7 @@ class _SocialPageState extends State<SocialPage> {
       },
       'isLiked': false,
       'type': 'normal',
+      'taggedPets': [],
     },
     {
       'id': 2,
@@ -49,6 +51,7 @@ class _SocialPageState extends State<SocialPage> {
       },
       'isLiked': false,
       'type': 'lost_found',
+      'taggedPets': [],
     },
     {
       'id': 3,
@@ -69,6 +72,7 @@ class _SocialPageState extends State<SocialPage> {
       },
       'isLiked': false,
       'type': 'normal',
+      'taggedPets': [],
     },
     {
       'id': 4,
@@ -89,6 +93,7 @@ class _SocialPageState extends State<SocialPage> {
       },
       'isLiked': false,
       'type': 'normal',
+      'taggedPets': [],
     },
     {
       'id': 5,
@@ -109,7 +114,27 @@ class _SocialPageState extends State<SocialPage> {
       },
       'isLiked': false,
       'type': 'normal',
+      'taggedPets': [],
     },
+  ];
+
+  final List<PetProfile> _userPets = [
+    PetProfile(
+      id: '1',
+      name: 'Max',
+      species: 'Dog',
+      breed: 'Golden Retriever',
+      age: '3 months',
+      imageUrl: 'assets/images/pet_max.png',
+    ),
+    PetProfile(
+      id: '2',
+      name: 'Luna',
+      species: 'Cat',
+      breed: 'Siamese',
+      age: '2 years',
+      imageUrl: 'assets/images/pet_luna.png',
+    ),
   ];
 
   @override
@@ -225,12 +250,31 @@ class _SocialPageState extends State<SocialPage> {
           if (post['content'].isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              child: Text(
-                post['content'],
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: post['type'] == 'lost_found' ? FontWeight.bold : FontWeight.normal,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post['content'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: post['type'] == 'lost_found' ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  if (post['taggedPets'].isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 4,
+                      children: [
+                        for (var petId in post['taggedPets'])
+                          Chip(
+                            label: Text(_userPets.firstWhere((pet) => pet.id == petId).name),
+                            backgroundColor: const Color(0xFF219EBC).withOpacity(0.2),
+                            labelStyle: const TextStyle(color: Color(0xFF219EBC)),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
               ),
             ),
 
@@ -680,6 +724,7 @@ class _SocialPageState extends State<SocialPage> {
   void _showCreatePostModal(BuildContext context) {
     final contentController = TextEditingController();
     String postType = 'normal';
+    List<String> taggedPets = [];
 
     showModalBottomSheet(
       context: context,
@@ -807,15 +852,43 @@ class _SocialPageState extends State<SocialPage> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: TextField(
-                        controller: contentController,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          hintText: postType == 'normal'
-                              ? 'What\'s on your mind?'
-                              : 'Describe the lost/found pet...',
-                          border: InputBorder.none,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextField(
+                            controller: contentController,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              hintText: postType == 'normal'
+                                  ? 'What\'s on your mind?'
+                                  : 'Describe the lost/found pet...',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Tag your pets:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Wrap(
+                            spacing: 8,
+                            children: _userPets.map((pet) {
+                              return FilterChip(
+                                label: Text(pet.name),
+                                selected: taggedPets.contains(pet.id),
+                                onSelected: (selected) {
+                                  setModalState(() {
+                                    if (selected) {
+                                      taggedPets.add(pet.id);
+                                    } else {
+                                      taggedPets.remove(pet.id);
+                                    }
+                                  });
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -885,6 +958,7 @@ class _SocialPageState extends State<SocialPage> {
                                 },
                                 'isLiked': false,
                                 'type': postType,
+                                'taggedPets': taggedPets,
                               });
                             });
                             Navigator.pop(context);
@@ -987,6 +1061,7 @@ class _SocialPageState extends State<SocialPage> {
     );
   }
 }
+
 
 
 
