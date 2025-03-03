@@ -305,6 +305,13 @@ class _SocialPageState extends State<SocialPage> {
                     );
                   },
                 ),
+                _buildActionButton(
+                  icon: Icons.message_outlined,
+                  label: 'Message',
+                  onTap: () {
+                    _showMessageDialog(context, post);
+                  },
+                ),
               ],
             ),
           ),
@@ -364,6 +371,14 @@ class _SocialPageState extends State<SocialPage> {
                   Navigator.pop(context);
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.message),
+                title: const Text('Message User'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showMessageDialog(context, post);
+                },
+              ),
               if (post['username'] == 'Emma Johnson') // Assuming this is the current user
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: Colors.red),
@@ -383,6 +398,59 @@ class _SocialPageState extends State<SocialPage> {
                 ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  void _showMessageDialog(BuildContext context, Map<String, dynamic> post) {
+    final messageController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Message ${post['username']}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: messageController,
+                decoration: const InputDecoration(
+                  hintText: 'Type your message...',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (messageController.text.isNotEmpty) {
+                  // Here you would typically send the message to a backend
+                  // For now, we'll just show a snackbar
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Message sent to ${post['username']}'),
+                      backgroundColor: const Color(0xFF219EBC),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF219EBC),
+              ),
+              child: const Text('Send'),
+            ),
+          ],
         );
       },
     );
@@ -919,6 +987,8 @@ class _SocialPageState extends State<SocialPage> {
     );
   }
 }
+
+
 
 
 
