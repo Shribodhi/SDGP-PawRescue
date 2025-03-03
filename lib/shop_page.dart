@@ -15,7 +15,7 @@ class ShopPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Welcome to the Pet Shop!',
+              'Welcome to the Pet Shop!!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

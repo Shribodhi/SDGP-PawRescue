@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'shop_page.dart';
-import 'travel_recommender.dart'; // Import the travel recommender page
+import 'travel_recommender.dart';
+import 'pet_tracker_page.dart'; 
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,7 +12,7 @@ class HomePage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const SizedBox(height: 50), // Space from top
+          const SizedBox(height: 50),
           const Text(
             'PawRescue',
             style: TextStyle(
@@ -34,13 +35,19 @@ class HomePage extends StatelessWidget {
                 _buildClickableGridItem(context, 'Shop', 'assets/shop.png', onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ShopPage()), // Navigate to Shop page
+                    MaterialPageRoute(builder: (context) => const ShopPage()),
                   );
                 }),
                 _buildClickableGridItem(context, 'Travel Recommender', 'assets/travel.png', onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const TravelRecommenderPage()), // Navigate to Travel Recommender page
+                    MaterialPageRoute(builder: (context) => const TravelRecommenderPage()),
+                  );
+                }),
+                _buildClickableGridItem(context, 'Pet Tracker', 'assets/pet_tracker.png', onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const PetTrackerPage()),
                   );
                 }),
               ],
@@ -114,4 +121,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
