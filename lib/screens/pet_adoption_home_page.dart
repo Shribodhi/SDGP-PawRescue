@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../widgets/pet_card.dart';
 
 class PetAdoptionHomePage extends StatelessWidget {
   const PetAdoptionHomePage({super.key});
@@ -9,140 +8,142 @@ class PetAdoptionHomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'Street to Sweet Home',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.orangeAccent,
+        title: const Text('Street to Sweet Home'),
+        backgroundColor: Colors.orange,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: GridView.count(
+          crossAxisCount: 2, // Keeps two columns in each row
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          children: const [
+            PetCard(
+              image: 'assets/mother_puppies.jpg',
+              title: 'A mother with puppies',
+              subtitle: 'Dehiwala',
+              age: '48 days',
+            ),
+            PetCard(
+              image: 'assets/adorable_puppies.jpg',
+              title: 'Adorable Puppies',
+              subtitle: 'Dehiwala',
+              age: '49 days',
+            ),
+            PetCard(
+              image: 'assets/twin_kittens.jpg',
+              title: 'Twin Kitten',
+              subtitle: 'Dehiwala',
+              age: '55 days',
+            ),
+            PetCard(
+              image: 'assets/middle_aged_cat.jpg',
+              title: 'Middle aged cat',
+              subtitle: 'Dehiwala',
+              age: '48 days',
+            ),
+            // New pet cards added below 👇
+            PetCard(
+              image: 'assets/golden_retriever.jpg',
+              title: 'Golden Retriever',
+              subtitle: 'Colombo',
+              age: '60 days',
+            ),
+            PetCard(
+              image: 'assets/siamese_cat.jpg',
+              title: 'Siamese Kitten',
+              subtitle: 'Galle',
+              age: '45 days',
+            ),
+            PetCard(
+              image: 'assets/husky_puppy.jpg',
+              title: 'Husky Puppy',
+              subtitle: 'Kandy',
+              age: '50 days',
+            ),
+            PetCard(
+              image: 'assets/persian_cat.jpg',
+              title: 'Persian Cat',
+              subtitle: 'Negombo',
+              age: '70 days',
+            ),
+            PetCard(
+              image: 'assets/labrador_puppy.jpg',
+              title: 'Labrador Puppy',
+              subtitle: 'Matara',
+              age: '55 days',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PetCard extends StatelessWidget {
+  final String image;
+  final String title;
+  final String subtitle;
+  final String age;
+
+  const PetCard({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.subtitle,
+    required this.age,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      child: Column(
         children: [
-          const SizedBox(height: 10),
-
-          // Search Bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search for pets...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.grey),
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 15),
-
-          // Scrollable Category Buttons
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                const SizedBox(width: 16),
-                _buildCategoryButton("All", "all"),
-                _buildCategoryButton("Dogs", "dog"),
-                _buildCategoryButton("Cats", "cat"),
-                _buildCategoryButton("Kittens", "kitten"),
-                _buildCategoryButton("Puppies", "puppy"),
-                _buildCategoryButton("Older Pets", "older"),
-                const SizedBox(width: 16),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 15),
-
-          // Pet Cards in a Scrollable Grid
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Two columns
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.8, // Controls item height
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(image),
+                  fit: BoxFit.cover,
                 ),
-                itemCount: petList.length,
-                itemBuilder: (context, index) {
-                  final pet = petList[index];
-                  return PetCard(
-                    image: pet['image'] ?? '',      // Default empty string if null
-                    title: pet['title'] ?? 'Unknown',
-                    subtitle: pet['subtitle'] ?? 'Unknown',
-                    age: pet['age'] ?? '0',         // Default age as '0' if null
-                  );
-                },
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(subtitle, style: TextStyle(color: Colors.grey[600])),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '$age old',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('See Details'),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-
-  // Helper method for category buttons
-  Widget _buildCategoryButton(String title, String filter) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: ElevatedButton(
-        onPressed: () {
-          // TODO: Implement category filtering logic
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.orangeAccent,
-          foregroundColor: Colors.white,
-        ),
-        child: Text(title),
-      ),
-    );
-  }
 }
-
-// Dummy pet data
-final List<Map<String, String>> petList = [
-  {
-    'image': 'assets/dog1.jpg',
-    'title': 'A mother with puppies',
-    'subtitle': 'Dehiwala',
-    'age': '45',
-  },
-  {
-    'image': 'assets/dog2.jpg',
-    'title': 'Adorable Puppies',
-    'subtitle': 'Dehiwala',
-    'age': '30',
-  },
-  {
-    'image': 'assets/cat1.jpg',
-    'title': 'Twin Kittens',
-    'subtitle': 'Dehiwala',
-    'age': '55',
-  },
-  {
-    'image': 'assets/cat2.jpg',
-    'title': 'Middle-aged Cat',
-    'subtitle': 'Dehiwala',
-    'age': '48',
-  },
-  {
-    'image': 'assets/dog3.jpg',
-    'title': 'Fluffy Golden Retriever',
-    'subtitle': 'Colombo',
-    'age': '60',
-  },
-  {
-    'image': 'assets/cat3.jpg',
-    'title': 'Playful Kitten',
-    'subtitle': 'Nugegoda',
-    'age': '35',
-  },
-];
