@@ -4,7 +4,6 @@ import 'screens/pets_page.dart';
 import 'screens/shop_page.dart';
 import 'screens/adopt_page.dart';
 import 'screens/social_page.dart';
-import 'screens/pet_profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,7 +18,6 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const HomeContent(),
     const PetsPage(),
-    const SocialPage(),
     const ShopPage(),
     const AdoptPage(),
     const ProfilePage(),
@@ -34,11 +32,11 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.pets),
+            icon: const Icon(Icons.people),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const PetProfilePage()),
+                MaterialPageRoute(builder: (context) => const SocialPage()),
               );
             },
           ),
@@ -63,10 +61,6 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.pets),
             label: 'My Pets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Social',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
@@ -284,5 +278,6 @@ class HomeContent extends StatelessWidget {
     );
   }
 }
+
 
 
