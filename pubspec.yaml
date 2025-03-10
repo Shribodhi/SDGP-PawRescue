@@ -45,6 +45,22 @@ flutter:
     - assets/medi_center.png
     - assets/shop.png
     - assets/pet_adoption.png
+    - assets/mother_puppies.jpg
+    - assets/adorable_puppies.jpg
+    - assets/golden_retriever.jpg
+    - assets/golden_retriever.jpg
+    - assets/husky_puppy.jpg
+    - assets/labrador_puppy.jpg
+    - assets/twin_kittens.jpg
+    - assets/middle_aged_cat.jpg
+    - assets/siamese_cat.jpg
+    - assets/persian_cat.jpg
+
+
+
+
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
