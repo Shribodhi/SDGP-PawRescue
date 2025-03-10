@@ -91,7 +91,6 @@ class HomeContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Greeting section
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -139,7 +138,6 @@ class HomeContent extends StatelessWidget {
             ),
             const SizedBox(height: 25),
 
-            // Quick access section
             const Text(
               'Quick Access',
               style: TextStyle(
@@ -209,7 +207,6 @@ class HomeContent extends StatelessWidget {
 
             const SizedBox(height: 25),
 
-            // Recent activity section
             const Text(
               'Recent Activity',
               style: TextStyle(
@@ -278,6 +275,8 @@ class HomeContent extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

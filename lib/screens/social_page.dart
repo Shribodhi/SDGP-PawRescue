@@ -127,7 +127,6 @@ class _SocialPageState extends State<SocialPage> {
             child: RefreshIndicator(
               color: const Color(0xFF219EBC),
               onRefresh: () async {
-                // Simulate refresh
                 await Future.delayed(const Duration(seconds: 1));
                 setState(() {});
               },
@@ -168,7 +167,6 @@ class _SocialPageState extends State<SocialPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Post header
           Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
@@ -226,7 +224,6 @@ class _SocialPageState extends State<SocialPage> {
             ),
           ),
 
-          // Post content
           if (post['content'].isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -239,7 +236,6 @@ class _SocialPageState extends State<SocialPage> {
               ),
             ),
 
-          // Post media (image or video)
           if (post['image'] != null)
             Container(
               height: 300,
@@ -269,12 +265,10 @@ class _SocialPageState extends State<SocialPage> {
               ),
             ),
 
-          // Reactions
           _buildReactionsBar(post),
 
           const Divider(),
 
-          // Post actions
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
@@ -384,7 +378,7 @@ class _SocialPageState extends State<SocialPage> {
                   _showMessageDialog(context, post);
                 },
               ),
-              if (post['username'] == 'Emma Johnson') // Assuming this is the current user
+              if (post['username'] == 'Emma Johnson')
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: Colors.red),
                   title: const Text('Delete Post', style: TextStyle(color: Colors.red)),
@@ -439,8 +433,6 @@ class _SocialPageState extends State<SocialPage> {
             ElevatedButton(
               onPressed: () {
                 if (messageController.text.isNotEmpty) {
-                  // Here you would typically send the message to a backend
-                  // For now, we'll just show a snackbar
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -464,7 +456,6 @@ class _SocialPageState extends State<SocialPage> {
   void _showComments(BuildContext context, Map<String, dynamic> post) {
     final commentController = TextEditingController();
 
-    // Sample comments
     final List<Map<String, dynamic>> comments = [
       {
         'username': 'Sarah Parker',
@@ -497,7 +488,6 @@ class _SocialPageState extends State<SocialPage> {
           ),
           child: Column(
             children: [
-              // Header
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                 decoration: BoxDecoration(
@@ -531,7 +521,6 @@ class _SocialPageState extends State<SocialPage> {
                 ),
               ),
 
-              // Comments list
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(10),
@@ -613,7 +602,6 @@ class _SocialPageState extends State<SocialPage> {
                 ),
               ),
 
-              // Comment input
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 decoration: BoxDecoration(
@@ -658,7 +646,6 @@ class _SocialPageState extends State<SocialPage> {
                       icon: const Icon(Icons.send, color: Color(0xFF219EBC)),
                       onPressed: () {
                         if (commentController.text.isNotEmpty) {
-                          // Add comment logic
                           setState(() {
                             post['comments']++;
                           });
@@ -702,7 +689,6 @@ class _SocialPageState extends State<SocialPage> {
               ),
               child: Column(
                 children: [
-                  // Header
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                     decoration: BoxDecoration(
@@ -736,7 +722,6 @@ class _SocialPageState extends State<SocialPage> {
                     ),
                   ),
 
-                  // User info and post type selection
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: Column(
@@ -808,7 +793,6 @@ class _SocialPageState extends State<SocialPage> {
                     ),
                   ),
 
-                  // Post content
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -825,7 +809,6 @@ class _SocialPageState extends State<SocialPage> {
                     ),
                   ),
 
-                  // Image placeholder
                   Container(
                     height: 200,
                     width: double.infinity,
@@ -855,7 +838,6 @@ class _SocialPageState extends State<SocialPage> {
                     ),
                   ),
 
-                  // Post button
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: SizedBox(
@@ -992,6 +974,7 @@ class _SocialPageState extends State<SocialPage> {
     );
   }
 }
+
 
 
 
