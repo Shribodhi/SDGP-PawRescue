@@ -31,7 +31,31 @@ class PetAdoptionHomePage extends StatelessWidget {
         "subtitle": "Dehiwala",
         "age": "48",
       },
-      // Add more pet entries here
+      {
+        "image": "assets/young_puppy.jpg",
+        "title": "Young Puppy",
+        "subtitle": "Colombo",
+        "age": "25",
+      },
+      {
+        "image": "assets/cute_kitten.jpg",
+        "title": "Cute Kitten",
+        "subtitle": "Negombo",
+        "age": "40",
+      },
+      {
+        "image": "assets/playful_dog.jpg",
+        "title": "Playful Dog",
+        "subtitle": "Galle",
+        "age": "60",
+      },
+      {
+        "image": "assets/stray_dog.jpg",
+        "title": "Stray Dog",
+        "subtitle": "Kandy",
+        "age": "35",
+      },
+      // Add more pet data here
     ];
 
     return Scaffold(
@@ -43,10 +67,10 @@ class PetAdoptionHomePage extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+            crossAxisCount: 2, // 2 columns
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            childAspectRatio: 0.8,
+            childAspectRatio: 0.75, // Adjust height
           ),
           itemCount: petList.length,
           itemBuilder: (context, index) {
