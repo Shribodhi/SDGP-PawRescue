@@ -1,74 +1,64 @@
 import 'package:flutter/material.dart';
-import '../widgets/pet_card.dart'; // Import the PetCard widget
+import '../widgets/pet_card.dart';
 
 class PetAdoptionHomePage extends StatelessWidget {
   const PetAdoptionHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> petList = [
+      {
+        "image": "assets/mother_puppies.jpg",
+        "title": "A mother with puppies",
+        "subtitle": "Dehiwala",
+        "age": "45",
+      },
+      {
+        "image": "assets/adorable_puppies.jpg",
+        "title": "Adorable Puppies",
+        "subtitle": "Dehiwala",
+        "age": "30",
+      },
+      {
+        "image": "assets/twin_kittens.jpg",
+        "title": "Twin Kitten",
+        "subtitle": "Dehiwala",
+        "age": "55",
+      },
+      {
+        "image": "assets/middle_aged_cat.jpg",
+        "title": "Middle aged cat",
+        "subtitle": "Dehiwala",
+        "age": "48",
+      },
+      // Add more pet entries here
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Street to Sweet Home'),
+        title: const Text("Street to Sweet Home"),
+        backgroundColor: Colors.orange,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'All',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'See More >',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.8,
           ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: const [
-                PetCard(
-                  image: 'assets/puppies.png',
-                  title: 'Adorable Puppies',
-                  subtitle: 'Autorine with puppies',
-                  age: '49',
-                ),
-                SizedBox(height: 16),
-                PetCard(
-                  image: 'assets/kitten.png',
-                  title: 'Twin Kitten',
-                  subtitle: 'Middle aged cat',
-                  age: '55',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pets),
-            label: 'Adoptions',
-          ),
-        ],
+          itemCount: petList.length,
+          itemBuilder: (context, index) {
+            final pet = petList[index];
+            return PetCard(
+              image: pet["image"]!,
+              title: pet["title"]!,
+              subtitle: pet["subtitle"]!,
+              age: pet["age"]!,
+            );
+          },
+        ),
       ),
     );
   }
