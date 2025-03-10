@@ -1,11 +1,10 @@
-# Initialize StandardScaler
-scaler = StandardScaler()
+# Build the model
+model = keras.Sequential([
+    keras.layers.Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
+    keras.layers.Dense(32, activation='relu'),
+    keras.layers.Dense(16, activation='relu'),
+    keras.layers.Dense(1)  # Output layer for prediction (food recommendation)
+])
 
-# Normalize weightRange (assuming weightRange is numeric now after label encoding)
-dataset['weightRange'] = label_encoder.fit_transform(dataset['weightRange'])
-
-# Normalize portionSize (if necessary)
-dataset['portionSize'] = scaler.fit_transform(dataset[['portionSize']])
-
-# Check the transformed data
-print(dataset.head())
+# Compile the model
+model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
