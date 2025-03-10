@@ -1,115 +1,148 @@
 import 'package:flutter/material.dart';
 import '../widgets/pet_card.dart';
 
-class PetAdoptionHomePage extends StatefulWidget {
+class PetAdoptionHomePage extends StatelessWidget {
   const PetAdoptionHomePage({super.key});
-
-  @override
-  _PetAdoptionHomePageState createState() => _PetAdoptionHomePageState();
-}
-
-class _PetAdoptionHomePageState extends State<PetAdoptionHomePage> {
-  final List<Map<String, String>> allPets = [
-    {"image": "assets/mother_puppies.jpg", "title": "A mother with puppies", "subtitle": "Dehiwala", "age": "45", "category": "dog"},
-    {"image": "assets/adorable_puppies.jpg", "title": "Adorable Puppies", "subtitle": "Dehiwala", "age": "30", "category": "dog"},
-    {"image": "assets/twin_kittens.jpg", "title": "Twin Kitten", "subtitle": "Dehiwala", "age": "55", "category": "cat"},
-    {"image": "assets/middle_aged_cat.jpg", "title": "Middle aged cat", "subtitle": "Dehiwala", "age": "48", "category": "cat"},
-    {"image": "assets/young_puppy.jpg", "title": "Young Puppy", "subtitle": "Colombo", "age": "25", "category": "dog"},
-    {"image": "assets/cute_kitten.jpg", "title": "Cute Kitten", "subtitle": "Negombo", "age": "40", "category": "cat"},
-    {"image": "assets/playful_dog.jpg", "title": "Playful Dog", "subtitle": "Galle", "age": "60", "category": "dog"},
-    {"image": "assets/stray_dog.jpg", "title": "Stray Dog", "subtitle": "Kandy", "age": "35", "category": "dog"},
-  ];
-
-  String selectedCategory = "all"; // Default category
-  String searchQuery = "";
-
-  List<Map<String, String>> get filteredPets {
-    return allPets.where((pet) {
-      final matchesCategory = selectedCategory == "all" || pet["category"] == selectedCategory;
-      final matchesSearch = pet["title"]!.toLowerCase().contains(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    }).toList();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Street to Sweet Home"),
-        backgroundColor: Colors.orange,
+        title: const Text(
+          'Street to Sweet Home',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.orangeAccent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            // Search Bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Search pets...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value;
-                });
-              },
-            ),
-            const SizedBox(height: 10),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
 
-            // Category Filter Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search for pets...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 15),
+
+          // Scrollable Category Buttons
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: [
+                const SizedBox(width: 16),
                 _buildCategoryButton("All", "all"),
                 _buildCategoryButton("Dogs", "dog"),
                 _buildCategoryButton("Cats", "cat"),
+                _buildCategoryButton("Kittens", "kitten"),
+                _buildCategoryButton("Puppies", "puppy"),
+                _buildCategoryButton("Older Pets", "older"),
+                const SizedBox(width: 16),
               ],
             ),
-            const SizedBox(height: 10),
+          ),
 
-            // Pet Grid
-            Expanded(
+          const SizedBox(height: 15),
+
+          // Pet Cards in a Scrollable Grid
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.75,
+                  crossAxisCount: 2, // Two columns
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.8, // Controls item height
                 ),
-                itemCount: filteredPets.length,
+                itemCount: petList.length,
                 itemBuilder: (context, index) {
-                  final pet = filteredPets[index];
+                  final pet = petList[index];
                   return PetCard(
-                    image: pet["image"]!,
-                    title: pet["title"]!,
-                    subtitle: pet["subtitle"]!,
-                    age: pet["age"]!,
+                    image: pet['image'] ?? '',      // Default empty string if null
+                    title: pet['title'] ?? 'Unknown',
+                    subtitle: pet['subtitle'] ?? 'Unknown',
+                    age: pet['age'] ?? '0',         // Default age as '0' if null
                   );
                 },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildCategoryButton(String text, String category) {
+  // Helper method for category buttons
+  Widget _buildCategoryButton(String title, String filter) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       child: ElevatedButton(
         onPressed: () {
-          setState(() {
-            selectedCategory = category;
-          });
+          // TODO: Implement category filtering logic
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: selectedCategory == category ? Colors.orange : Colors.grey[300],
-          foregroundColor: selectedCategory == category ? Colors.white : Colors.black,
+          backgroundColor: Colors.orangeAccent,
+          foregroundColor: Colors.white,
         ),
-        child: Text(text),
+        child: Text(title),
       ),
     );
   }
 }
+
+// Dummy pet data
+final List<Map<String, String>> petList = [
+  {
+    'image': 'assets/dog1.jpg',
+    'title': 'A mother with puppies',
+    'subtitle': 'Dehiwala',
+    'age': '45',
+  },
+  {
+    'image': 'assets/dog2.jpg',
+    'title': 'Adorable Puppies',
+    'subtitle': 'Dehiwala',
+    'age': '30',
+  },
+  {
+    'image': 'assets/cat1.jpg',
+    'title': 'Twin Kittens',
+    'subtitle': 'Dehiwala',
+    'age': '55',
+  },
+  {
+    'image': 'assets/cat2.jpg',
+    'title': 'Middle-aged Cat',
+    'subtitle': 'Dehiwala',
+    'age': '48',
+  },
+  {
+    'image': 'assets/dog3.jpg',
+    'title': 'Fluffy Golden Retriever',
+    'subtitle': 'Colombo',
+    'age': '60',
+  },
+  {
+    'image': 'assets/cat3.jpg',
+    'title': 'Playful Kitten',
+    'subtitle': 'Nugegoda',
+    'age': '35',
+  },
+];
