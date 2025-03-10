@@ -3,7 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterTrackerPage extends StatefulWidget {
-  const RegisterTrackerPage({super.key});
+  final String? initialTrackerModel;
+
+  const RegisterTrackerPage({
+    super.key,
+    this.initialTrackerModel,
+  });
 
   @override
   State<RegisterTrackerPage> createState() => _RegisterTrackerPageState();
@@ -14,7 +19,13 @@ class _RegisterTrackerPageState extends State<RegisterTrackerPage> {
   final _petNameController = TextEditingController();
   final _simNumberController = TextEditingController();
   String _selectedPetType = 'Dog';
-  String _selectedTrackerModel = 'A9G';
+  late String _selectedTrackerModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTrackerModel = widget.initialTrackerModel ?? 'A9G';
+  }
 
   Future<void> _registerTracker() async {
     if (_formKey.currentState!.validate()) {
@@ -27,10 +38,7 @@ class _RegisterTrackerPageState extends State<RegisterTrackerPage> {
           return;
         }
 
-        await FirebaseFirestore.instance
-            .collection('trackers')
-            .doc(_simNumberController.text)
-            .set({
+        final trackerData = {
           'petName': _petNameController.text,
           'simNumber': _simNumberController.text,
           'petType': _selectedPetType,
@@ -42,7 +50,21 @@ class _RegisterTrackerPageState extends State<RegisterTrackerPage> {
             'longitude': 0.0,
             'timestamp': FieldValue.serverTimestamp(),
           },
-        });
+        };
+
+        // Add activity data if it's a smart tracker
+        if (_selectedTrackerModel == 'A9G') {
+          trackerData['activityData'] = {
+            'heart_rate': 0,
+            'steps': 0,
+            'timestamp': FieldValue.serverTimestamp(),
+          };
+        }
+
+        await FirebaseFirestore.instance
+            .collection('trackers')
+            .doc(_simNumberController.text)
+            .set(trackerData);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +150,7 @@ class _RegisterTrackerPageState extends State<RegisterTrackerPage> {
                 items: ['A9G', 'Third Party']
                     .map((model) => DropdownMenuItem(
                           value: model,
-                          child: Text(model),
+                          child: Text(model == 'A9G' ? 'PR Smart Tracker (A9G)' : 'Third Party Tracker'),
                         ))
                     .toList(),
                 onChanged: (value) {

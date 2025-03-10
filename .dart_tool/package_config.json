@@ -68,6 +68,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "equatable",
+      "rootUri": "file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/equatable-2.0.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "fake_async",
       "rootUri": "file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/fake_async-1.3.1",
       "packageUri": "lib/",
@@ -114,6 +120,12 @@
       "rootUri": "file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/fixnum-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.1"
+    },
+    {
+      "name": "fl_chart",
+      "rootUri": "file:///C:/Users/Samadhi/AppData/Local/Pub/Cache/hosted/pub.dev/fl_chart-0.70.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "flutter",
@@ -440,7 +452,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-03-03T16:14:13.143281Z",
+  "generated": "2025-03-10T03:28:40.346055Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///D:/1%20Samadhi%20UNI/SDGP/SDGP-PawRescue/.dart_tool/flutter",
