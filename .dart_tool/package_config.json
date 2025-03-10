@@ -2,6 +2,12 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "archive",
+      "rootUri": "file:///C:/Users/kasun/AppData/Local/Pub/Cache/hosted/pub.dev/archive-3.6.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "async",
       "rootUri": "file:///C:/Users/kasun/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.11.0",
       "packageUri": "lib/",
@@ -28,6 +34,12 @@
     {
       "name": "collection",
       "rootUri": "file:///C:/Users/kasun/AppData/Local/Pub/Cache/hosted/pub.dev/collection-1.19.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "crypto",
+      "rootUri": "file:///C:/Users/kasun/AppData/Local/Pub/Cache/hosted/pub.dev/crypto-3.0.6",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -82,6 +94,12 @@
     {
       "name": "lints",
       "rootUri": "file:///C:/Users/kasun/AppData/Local/Pub/Cache/hosted/pub.dev/lints-4.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "lottie",
+      "rootUri": "file:///C:/Users/kasun/AppData/Local/Pub/Cache/hosted/pub.dev/lottie-2.7.0",
       "packageUri": "lib/",
       "languageVersion": "3.1"
     },
@@ -152,6 +170,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "typed_data",
+      "rootUri": "file:///C:/Users/kasun/AppData/Local/Pub/Cache/hosted/pub.dev/typed_data-1.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
       "name": "vector_math",
       "rootUri": "file:///C:/Users/kasun/AppData/Local/Pub/Cache/hosted/pub.dev/vector_math-2.1.4",
       "packageUri": "lib/",
@@ -170,7 +194,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-03-01T21:15:44.894082Z",
+  "generated": "2025-03-02T00:44:02.207189Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///C:/flutter",
