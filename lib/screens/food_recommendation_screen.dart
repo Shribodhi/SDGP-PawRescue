@@ -4,10 +4,7 @@ import '../services/tflite_service.dart';
 class FoodRecommendationScreen extends StatefulWidget {
   final Map<String, dynamic> petPreferences;
 
-  const FoodRecommendationScreen({
-    Key? key,
-    required this.petPreferences,
-  }) : super(key: key);
+  const FoodRecommendationScreen({super.key, required this.petPreferences});
 
   @override
   _FoodRecommendationScreenState createState() =>
@@ -19,14 +16,12 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen>
   final TFLiteService _tfliteService = TFLiteService();
   late AnimationController _animationController;
   bool _isLoading = false;
-  double _recommendation = 0;
+  int _recommendedIndex = 0;
 
-  // Sample food data - Replace with your actual food database
   final List<Map<String, dynamic>> _foodOptions = [
     {
       'name': 'Premium Dog Nutrition',
-      'image':
-          'https://example.com/dog-food-1.jpg', // Replace with actual image URL
+      'image': 'https://example.com/dog-food-1.jpg',
       'description': 'High-quality protein-rich formula for active dogs',
       'features': ['High Protein', 'Grain Free', 'All Natural'],
       'rating': 4.8,
@@ -37,7 +32,19 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen>
         'Improves digestion'
       ],
     },
-    // Add more food options here
+    {
+      'name': 'Balanced Cat Delight',
+      'image': 'https://example.com/cat-food-1.jpg',
+      'description': 'Perfect blend of nutrition for indoor cats',
+      'features': ['Omega-3', 'Digestive Support', 'No Artificial Additives'],
+      'rating': 4.6,
+      'price': '\$39.99',
+      'benefits': [
+        'Boosts immunity',
+        'Enhances fur softness',
+        'Supports joint health'
+      ],
+    },
   ];
 
   @override
@@ -62,14 +69,12 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen>
     setState(() => _isLoading = true);
 
     try {
-      // Convert preferences to input data for TFLite
       List<double> inputData =
           _convertPreferencesToInput(widget.petPreferences);
+      double recommendationScore = _tfliteService.predict(inputData)[0];
 
-      // Get prediction from TFLite
-      _recommendation = _tfliteService.predict(inputData)[0];
+      _recommendedIndex = recommendationScore > 0.5 ? 0 : 1;
 
-      // Show recommendation dialog after prediction
       _showRecommendationDialog();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,50 +86,43 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen>
   }
 
   List<double> _convertPreferencesToInput(Map<String, dynamic> preferences) {
-    // Convert preferences to the format expected by your TFLite model
-    // This is just an example - modify according to your model's requirements
     return [
       preferences['petType'] == 'Dog' ? 1.0 : 0.0,
       preferences['healthCondition'] == 'Healthy' ? 1.0 : 0.0,
       preferences['petAge'] == 'Adult' ? 1.0 : 0.0,
-      // Add more conversions based on your model's input requirements
     ];
   }
 
   void _showRecommendationDialog() {
+    final recommendedFood = _foodOptions[_recommendedIndex];
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          child: SingleChildScrollView(
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Header with close button
                 Stack(
                   children: [
                     Container(
                       height: 120,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.blue,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
                         ),
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
-                              Icons.pets,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                            const SizedBox(height: 8),
+                            Icon(Icons.pets, color: Colors.white, size: 40),
+                            SizedBox(height: 8),
                             Text(
                               'Perfect Match Found!',
                               style: TextStyle(
@@ -147,182 +145,115 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen>
                     ),
                   ],
                 ),
-
-                // Food recommendation content
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Food image
-                      Container(
-                        height: 200,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                          image: DecorationImage(
-                            image: NetworkImage(_foodOptions[0]['image']),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Food name and rating
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _foodOptions[0]['name'],
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.shade50,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  _foodOptions[0]['rating'].toString(),
-                                  style: TextStyle(
-                                    color: Colors.blue.shade700,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Price
-                      Text(
-                        _foodOptions[0]['price'],
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.blue.shade700,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Features chips
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: (_foodOptions[0]['features'] as List<String>)
-                            .map((feature) => Chip(
-                                  label: Text(
-                                    feature,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  backgroundColor: Colors.blue,
-                                ))
-                            .toList(),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Benefits
-                      const Text(
-                        'Benefits',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      ...(_foodOptions[0]['benefits'] as List<String>)
-                          .map((benefit) => Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green.shade400,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(benefit),
-                                    ),
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                      const SizedBox(height: 24),
-
-                      // Action buttons
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () {
-                                // Handle view details action
-                              },
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.blue,
-                                side: const BorderSide(color: Colors.blue),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: const Text('View Details'),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Handle buy now action
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: const Text('Buy Now'),
-                            ),
-                          ),
-                        ],
+                const SizedBox(height: 20),
+                Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
                       ),
                     ],
+                    image: DecorationImage(
+                      image: NetworkImage(recommendedFood['image']),
+                      fit: BoxFit.cover,
+                    ),
                   ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  recommendedFood['name'],
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  recommendedFood['price'],
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.blue.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: (recommendedFood['features'] as List<String>)
+                      .map((feature) => Chip(
+                            label: Text(feature,
+                                style: TextStyle(color: Colors.white)),
+                            backgroundColor: Colors.blue,
+                          ))
+                      .toList(),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Benefits',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: (recommendedFood['benefits'] as List<String>)
+                      .map((benefit) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              children: [
+                                Icon(Icons.check_circle,
+                                    color: Colors.green.shade400, size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(child: Text(benefit)),
+                              ],
+                            ),
+                          ))
+                      .toList(),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.blue,
+                          side: const BorderSide(color: Colors.blue),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text('View Details'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text('Buy Now'),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -343,14 +274,11 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen>
                   const SizedBox(height: 16),
                   Text(
                     'Finding the perfect food for your pet...',
-                    style: TextStyle(
-                      color: Colors.blue.shade700,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.blue.shade700, fontSize: 16),
                   ),
                 ],
               )
-            : const SizedBox(), // Empty when not loading as dialog will show
+            : const SizedBox(),
       ),
     );
   }

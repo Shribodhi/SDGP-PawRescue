@@ -13,7 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   lottie: ^2.3.2
   tflite_flutter: ^0.9.1
-  tflite_flutter_helper: ^0.2.0  # Compatible with tflite_flutter 0.9.1
+  tflite_flutter_helper: ^0.2.1  # Compatible with tflite_flutter 0.9.1
 
 dev_dependencies:
   flutter_test:
@@ -29,6 +29,7 @@ flutter:
     - assets/animal_profiles.png
     - assets/medi_center.png
     - assets/food_icon.png
+    - assets/model/pet_food_recommendation.tflite
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
