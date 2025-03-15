@@ -1,14 +1,14 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../models/user_preferences.dart';
 
 class PreferencesScreen extends StatefulWidget {
   final Function(UserPreferences) onSave;
 
-  const PreferencesScreen({super.key, required this.onSave});
+  const PreferencesScreen({Key? key, required this.onSave}) : super(key: key);
 
   @override
-  _PreferencesScreenState createState() => _PreferencesScreenState();
+  State<PreferencesScreen> createState() => _PreferencesScreenState();
 }
 
 class _PreferencesScreenState extends State<PreferencesScreen> {
@@ -45,556 +45,430 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   // Slider value
   double _portionSize = 2.0;
 
+  // Loading state
+  bool _isLoading = false;
+
   // Colors
-  final Color primaryColor = Colors.orange;
-  final Color secondaryColor = const Color(0xFFFFE0B2);
-  final Color backgroundColor = Colors.white;
+  final Color primaryColor = Colors.blue;
+  final Color secondaryColor = Colors.blue.shade100;
+  final Color textColor = Colors.blue.shade900;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        title: const Text('Pet Food Recommendation'),
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Select Pet Type',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: 24,
-          ),
-        ),
-        centerTitle: true,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.orange.shade800,
-              Colors.orange.shade500,
-              Colors.orange.shade300,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            child: ListView(
-              children: [
-                const SizedBox(height: 10),
-
-                // Pet Type Selection
-                _buildGlassyDropdown(
-                  label: 'Select Pet',
-                  value: _selectedPetType,
-                  items: ['Dog', 'Cat', 'Bird', 'Rabbit', 'Hamster'],
-                  onChanged: (value) =>
-                      setState(() => _selectedPetType = value!),
-                  icon: _getPetIcon(_selectedPetType),
+        color: Colors.white,
+        child: Column(
+          children: [
+            // Blue decorative header
+            Container(
+              height: 20,
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
                 ),
-
-                const SizedBox(height: 16),
-
-                // Health Condition Dropdown
-                _buildGlassyDropdown(
-                  label: 'Health Condition',
-                  value: _selectedHealthCondition,
-                  items: [
-                    'Healthy',
-                    'Overweight',
-                    'Underweight',
-                    'Sensitive Stomach',
-                    'Joint Issues'
-                  ],
-                  onChanged: (value) =>
-                      setState(() => _selectedHealthCondition = value!),
-                  icon: _getHealthIcon(_selectedHealthCondition),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Pet Age Dropdown
-                _buildGlassyDropdown(
-                  label: 'Pet Age',
-                  value: _selectedPetAge,
-                  items: ['Puppy/Kitten', 'Young', 'Adult', 'Senior'],
-                  onChanged: (value) =>
-                      setState(() => _selectedPetAge = value!),
-                  icon: Icons.cake,
-                ),
-
-                const SizedBox(height: 16),
-
-                // Weight Range Dropdown
-                _buildGlassyDropdown(
-                  label: 'Weight Range',
-                  value: _selectedWeightRange,
-                  items: [
-                    'Small (<10kg)',
-                    'Medium (10-25kg)',
-                    'Large (25-40kg)',
-                    'Extra Large (>40kg)'
-                  ],
-                  onChanged: (value) =>
-                      setState(() => _selectedWeightRange = value!),
-                  icon: Icons.monitor_weight_outlined,
-                ),
-
-                const SizedBox(height: 16),
-
-                // Activity Level Dropdown
-                _buildGlassyDropdown(
-                  label: 'Activity Level',
-                  value: _selectedActivityLevel,
-                  items: ['Low', 'Medium', 'High', 'Very Active'],
-                  onChanged: (value) =>
-                      setState(() => _selectedActivityLevel = value!),
-                  icon: Icons.directions_run,
-                ),
-
-                const SizedBox(height: 20),
-
-                // Allergies Multi-Select
-                _buildGlassyChipSelector(
-                  label: 'Allergies',
-                  options: _availableAllergies,
-                  selectedOptions: _selectedAllergies,
-                ),
-
-                const SizedBox(height: 20),
-
-                // Dietary Preferences Multi-Select
-                _buildGlassyChipSelector(
-                  label: 'Dietary Preferences',
-                  options: _dietaryOptions,
-                  selectedOptions: _selectedDietaryPreferences,
-                ),
-
-                const SizedBox(height: 20),
-
-                // Toggle Buttons
-                _buildGlassyToggle(
-                  label: 'Include Treats',
-                  value: _includeTreats,
-                  onChanged: (value) => setState(() => _includeTreats = value),
-                ),
-
-                const SizedBox(height: 12),
-
-                _buildGlassyToggle(
-                  label: 'Budget-Friendly Only',
-                  value: _budgetFriendly,
-                  onChanged: (value) => setState(() => _budgetFriendly = value),
-                ),
-
-                const SizedBox(height: 20),
-
-                // Portion Size Slider
-                _buildGlassySlider(
-                  label: 'Portion Size',
-                  value: _portionSize,
-                  min: 0.5,
-                  max: 5.0,
-                  divisions: 9,
-                  onChanged: (value) => setState(() => _portionSize = value),
-                ),
-
-                const SizedBox(height: 30),
-
-                // Get Recommendation Button
-                _buildGlowingButton(),
-
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
-          ),
+
+            // Main content
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // Pet Type Section
+                  _buildSectionTitle('Pet Type'),
+                  const SizedBox(height: 10),
+                  _buildDropdown(
+                    value: _selectedPetType,
+                    items: ['Dog', 'Cat', 'Bird', 'Rabbit', 'Hamster'],
+                    onChanged: (value) =>
+                        setState(() => _selectedPetType = value!),
+                    icon: _getPetIcon(_selectedPetType),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Health Condition Section
+                  _buildSectionTitle('Health Condition'),
+                  const SizedBox(height: 10),
+                  _buildDropdown(
+                    value: _selectedHealthCondition,
+                    items: [
+                      'Healthy',
+                      'Overweight',
+                      'Underweight',
+                      'Sensitive Stomach',
+                      'Joint Issues'
+                    ],
+                    onChanged: (value) =>
+                        setState(() => _selectedHealthCondition = value!),
+                    icon: _getHealthIcon(_selectedHealthCondition),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Pet Age Section
+                  _buildSectionTitle('Pet Age'),
+                  const SizedBox(height: 10),
+                  _buildDropdown(
+                    value: _selectedPetAge,
+                    items: ['Puppy/Kitten', 'Young', 'Adult', 'Senior'],
+                    onChanged: (value) =>
+                        setState(() => _selectedPetAge = value!),
+                    icon: Icons.cake,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Weight Range Section
+                  _buildSectionTitle('Weight Range'),
+                  const SizedBox(height: 10),
+                  _buildDropdown(
+                    value: _selectedWeightRange,
+                    items: [
+                      'Small (<10kg)',
+                      'Medium (10-25kg)',
+                      'Large (25-40kg)',
+                      'Extra Large (>40kg)'
+                    ],
+                    onChanged: (value) =>
+                        setState(() => _selectedWeightRange = value!),
+                    icon: Icons.monitor_weight_outlined,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Activity Level Section
+                  _buildSectionTitle('Activity Level'),
+                  const SizedBox(height: 10),
+                  _buildDropdown(
+                    value: _selectedActivityLevel,
+                    items: ['Low', 'Medium', 'High', 'Very Active'],
+                    onChanged: (value) =>
+                        setState(() => _selectedActivityLevel = value!),
+                    icon: Icons.directions_run,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Allergies Section
+                  _buildSectionTitle('Allergies'),
+                  const SizedBox(height: 10),
+                  _buildChipSelector(
+                    options: _availableAllergies,
+                    selectedOptions: _selectedAllergies,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Dietary Preferences Section
+                  _buildSectionTitle('Dietary Preferences'),
+                  const SizedBox(height: 10),
+                  _buildChipSelector(
+                    options: _dietaryOptions,
+                    selectedOptions: _selectedDietaryPreferences,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Toggle Options
+                  _buildToggleOption(
+                    label: 'Include Treats',
+                    value: _includeTreats,
+                    onChanged: (value) =>
+                        setState(() => _includeTreats = value),
+                    icon: Icons.icecream,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _buildToggleOption(
+                    label: 'Budget-Friendly Options Only',
+                    value: _budgetFriendly,
+                    onChanged: (value) =>
+                        setState(() => _budgetFriendly = value),
+                    icon: Icons.attach_money,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Portion Size Slider
+                  _buildSectionTitle('Portion Size'),
+                  const SizedBox(height: 10),
+                  _buildSlider(),
+
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+
+            // Bottom button
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _getRecommendation,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                    elevation: 2,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Get Recommendation',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildGlassyDropdown({
-    required String label,
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: textColor,
+      ),
+    );
+  }
+
+  Widget _buildDropdown({
     required String value,
     required List<String> items,
     required Function(String?) onChanged,
     required IconData icon,
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: secondaryColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 1,
-          ),
-        ],
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1.5,
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: value,
-                      dropdownColor: Colors.orange.shade300.withOpacity(0.9),
-                      icon: const Icon(Icons.arrow_drop_down,
-                          color: Colors.white),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      onChanged: onChanged,
-                      items: items
-                          .map((item) => DropdownMenuItem(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ))
-                          .toList(),
-                      hint: Text(
-                        label,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGlassyChipSelector({
-    required String label,
-    required List<String> options,
-    required List<String> selectedOptions,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 8),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.white.withOpacity(0.2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                spreadRadius: 1,
-              ),
-            ],
-            border: Border.all(
-              color: Colors.white.withOpacity(0.3),
-              width: 1.5,
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: options.map((option) {
-                  final isSelected = selectedOptions.contains(option);
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          selectedOptions.remove(option);
-                        } else {
-                          selectedOptions.add(option);
-                        }
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Colors.orange.shade600.withOpacity(0.8)
-                            : Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.5),
-                          width: 1,
-                        ),
-                      ),
-                      child: Text(
-                        option,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGlassyToggle({
-    required String label,
-    required bool value,
-    required Function(bool) onChanged,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white.withOpacity(0.2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 1,
-          ),
-        ],
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1.5,
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              Switch(
-                value: value,
-                onChanged: onChanged,
-                activeColor: Colors.orange.shade600,
-                activeTrackColor: Colors.white.withOpacity(0.5),
-                inactiveThumbColor: Colors.white,
-                inactiveTrackColor: Colors.white.withOpacity(0.3),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGlassySlider({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required int divisions,
-    required Function(double) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 8),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.white.withOpacity(0.2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                spreadRadius: 1,
-              ),
-            ],
-            border: Border.all(
-              color: Colors.white.withOpacity(0.3),
-              width: 1.5,
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Small',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.shade600.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '${value.toStringAsFixed(1)} cups',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        'Large',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                  SliderTheme(
-                    data: SliderThemeData(
-                      activeTrackColor: Colors.white,
-                      inactiveTrackColor: Colors.white.withOpacity(0.3),
-                      thumbColor: Colors.orange.shade600,
-                      overlayColor: Colors.orange.withOpacity(0.2),
-                      thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: 12),
-                      overlayShape:
-                          const RoundSliderOverlayShape(overlayRadius: 20),
-                    ),
-                    child: Slider(
-                      value: value,
-                      min: min,
-                      max: max,
-                      divisions: divisions,
-                      onChanged: onChanged,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGlowingButton() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.orange.shade700.withOpacity(0.6),
-            blurRadius: 15,
-            spreadRadius: 2,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: ElevatedButton(
-        onPressed: () {
-          widget.onSave(UserPreferences(
-            petType: _selectedPetType,
-            healthCondition: _selectedHealthCondition,
-            petAge: _selectedPetAge,
-            weightRange: _selectedWeightRange,
-            activityLevel: _selectedActivityLevel,
-            allergies: _selectedAllergies,
-            dietaryPreferences: _selectedDietaryPreferences,
-            includeTreats: _includeTreats,
-            budgetFriendly: _budgetFriendly,
-            portionSize: _portionSize,
-          ));
-          Navigator.pop(context);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.orange.shade600,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          elevation: 0,
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: Row(
           children: [
-            Icon(Icons.pets, size: 24),
-            SizedBox(width: 8),
-            Text(
-              'Get Recommendation',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
+            Expanded(
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: value,
+                  isExpanded: true,
+                  icon: Icon(Icons.arrow_drop_down, color: primaryColor),
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 16,
+                  ),
+                  onChanged: onChanged,
+                  items: items
+                      .map((item) => DropdownMenuItem(
+                            value: item,
+                            child: Text(item),
+                          ))
+                      .toList(),
+                ),
+              ),
+            ),
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: primaryColor.withOpacity(0.1),
+              ),
+              child: Icon(
+                icon,
+                color: primaryColor,
+                size: 18,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildChipSelector({
+    required List<String> options,
+    required List<String> selectedOptions,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: secondaryColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: options.map((option) {
+          final isSelected = selectedOptions.contains(option);
+          return FilterChip(
+            label: Text(option),
+            selected: isSelected,
+            checkmarkColor: Colors.white,
+            selectedColor: primaryColor,
+            backgroundColor: Colors.grey.shade100,
+            labelStyle: TextStyle(
+              color: isSelected ? Colors.white : textColor,
+            ),
+            onSelected: (selected) {
+              setState(() {
+                if (selected) {
+                  selectedOptions.add(option);
+                } else {
+                  selectedOptions.remove(option);
+                }
+              });
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildToggleOption({
+    required String label,
+    required bool value,
+    required Function(bool) onChanged,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: secondaryColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: primaryColor, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                color: textColor,
+              ),
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: primaryColor,
+            activeTrackColor: secondaryColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSlider() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: secondaryColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Small'),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_portionSize.toStringAsFixed(1)} cups',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+              const Text('Large'),
+            ],
+          ),
+          Slider(
+            value: _portionSize,
+            min: 0.5,
+            max: 5.0,
+            divisions: 9,
+            activeColor: primaryColor,
+            inactiveColor: secondaryColor,
+            label: '${_portionSize.toStringAsFixed(1)} cups',
+            onChanged: (value) {
+              setState(() {
+                _portionSize = value;
+              });
+            },
+          ),
+        ],
       ),
     );
   }
@@ -604,7 +478,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       case 'Dog':
         return Icons.pets;
       case 'Cat':
-        return Icons.pets;
+        return Icons.catching_pokemon;
       case 'Bird':
         return Icons.flutter_dash;
       case 'Rabbit':
@@ -631,5 +505,139 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       default:
         return Icons.favorite;
     }
+  }
+
+  void _getRecommendation() async {
+    setState(() => _isLoading = true);
+
+    // Simulate API call
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Save preferences
+    widget.onSave(UserPreferences(
+      petType: _selectedPetType,
+      healthCondition: _selectedHealthCondition,
+      petAge: _selectedPetAge,
+      weightRange: _selectedWeightRange,
+      activityLevel: _selectedActivityLevel,
+      allergies: _selectedAllergies,
+      dietaryPreferences: _selectedDietaryPreferences,
+      includeTreats: _includeTreats,
+      budgetFriendly: _budgetFriendly,
+      portionSize: _portionSize,
+    ));
+
+    setState(() => _isLoading = false);
+
+    // Show recommendation dialog
+    _showRecommendationDialog();
+  }
+
+  void _showRecommendationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Recommended Food',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  height: 180,
+                  width: 180,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                    image: const DecorationImage(
+                      image: NetworkImage('https://placekitten.com/200/200'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Premium Pet Food',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Perfect for your ${_selectedPetType.toLowerCase()}\'s needs!',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildInfoChip('High Protein', Icons.fitness_center),
+                    _buildInfoChip('No Fillers', Icons.block),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoChip(String label, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.blue.shade100),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: primaryColor),
+          SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: primaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

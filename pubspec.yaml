@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   lottie: ^2.3.2
+  tflite_flutter: ^0.9.1
+  tflite_flutter_helper: ^0.2.0  # Compatible with tflite_flutter 0.9.1
 
 dev_dependencies:
   flutter_test:
