@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../models/user_preferences.dart';
+import 'food_recommendation_screen.dart'; // Import the new screen
 
 class PreferencesScreen extends StatefulWidget {
   final Function(UserPreferences) onSave;
@@ -510,111 +511,54 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   void _getRecommendation() async {
     setState(() => _isLoading = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // Create a map of preferences to pass to the FoodRecommendationScreen
+      final Map<String, dynamic> preferencesMap = {
+        'petType': _selectedPetType,
+        'healthCondition': _selectedHealthCondition,
+        'petAge': _selectedPetAge,
+        'weightRange': _selectedWeightRange,
+        'activityLevel': _selectedActivityLevel,
+        'allergies': _selectedAllergies,
+        'dietaryPreferences': _selectedDietaryPreferences,
+        'includeTreats': _includeTreats,
+        'budgetFriendly': _budgetFriendly,
+        'portionSize': _portionSize,
+      };
 
-    // Save preferences
-    widget.onSave(UserPreferences(
-      petType: _selectedPetType,
-      healthCondition: _selectedHealthCondition,
-      petAge: _selectedPetAge,
-      weightRange: _selectedWeightRange,
-      activityLevel: _selectedActivityLevel,
-      allergies: _selectedAllergies,
-      dietaryPreferences: _selectedDietaryPreferences,
-      includeTreats: _includeTreats,
-      budgetFriendly: _budgetFriendly,
-      portionSize: _portionSize,
-    ));
+      // Save preferences using the callback
+      widget.onSave(UserPreferences(
+        petType: _selectedPetType,
+        healthCondition: _selectedHealthCondition,
+        petAge: _selectedPetAge,
+        weightRange: _selectedWeightRange,
+        activityLevel: _selectedActivityLevel,
+        allergies: _selectedAllergies,
+        dietaryPreferences: _selectedDietaryPreferences,
+        includeTreats: _includeTreats,
+        budgetFriendly: _budgetFriendly,
+        portionSize: _portionSize,
+      ));
 
-    setState(() => _isLoading = false);
-
-    // Show recommendation dialog
-    _showRecommendationDialog();
+      // Navigate to the FoodRecommendationScreen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FoodRecommendationScreen(
+            petPreferences: preferencesMap,
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
-  void _showRecommendationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Recommended Food',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  height: 180,
-                  width: 180,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                    image: const DecorationImage(
-                      image: NetworkImage('https://placekitten.com/200/200'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Premium Pet Food',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Perfect for your ${_selectedPetType.toLowerCase()}\'s needs!',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildInfoChip('High Protein', Icons.fitness_center),
-                    _buildInfoChip('No Fillers', Icons.block),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // Remove the _showRecommendationDialog method as we're now navigating to a new screen
 
   Widget _buildInfoChip(String label, IconData icon) {
     return Container(

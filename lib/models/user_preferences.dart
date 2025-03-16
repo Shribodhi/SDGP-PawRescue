@@ -22,4 +22,36 @@ class UserPreferences {
     required this.budgetFriendly,
     required this.portionSize,
   });
+
+  // Convert to a map for Firebase storage
+  Map<String, dynamic> toMap() {
+    return {
+      'petType': petType,
+      'healthCondition': healthCondition,
+      'petAge': petAge,
+      'weightRange': weightRange,
+      'activityLevel': activityLevel,
+      'allergies': allergies,
+      'dietaryPreferences': dietaryPreferences,
+      'includeTreats': includeTreats,
+      'budgetFriendly': budgetFriendly,
+      'portionSize': portionSize,
+    };
+  }
+
+  // Create from a map (for Firebase retrieval)
+  factory UserPreferences.fromMap(Map<String, dynamic> map) {
+    return UserPreferences(
+      petType: map['petType'] ?? 'Dog',
+      healthCondition: map['healthCondition'] ?? 'Healthy',
+      petAge: map['petAge'] ?? 'Adult',
+      weightRange: map['weightRange'] ?? 'Medium (10-25kg)',
+      activityLevel: map['activityLevel'] ?? 'Medium',
+      allergies: List<String>.from(map['allergies'] ?? []),
+      dietaryPreferences: List<String>.from(map['dietaryPreferences'] ?? []),
+      includeTreats: map['includeTreats'] ?? true,
+      budgetFriendly: map['budgetFriendly'] ?? false,
+      portionSize: (map['portionSize'] ?? 2.0).toDouble(),
+    );
+  }
 }

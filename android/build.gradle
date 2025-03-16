@@ -1,4 +1,10 @@
 buildscript {
+    // Add this repositories section inside buildscript
+    repositories {
+        google()
+        mavenCentral()
+    }
+    
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.2' // Use latest version
         classpath 'com.google.gms:google-services:4.4.0' // Google Services plugin
