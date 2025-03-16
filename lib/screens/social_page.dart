@@ -20,13 +20,6 @@ class _SocialPageState extends State<SocialPage> {
       'video': null,
       'likes': 42,
       'comments': 8,
-      'reactions': {
-        'love': 20,
-        'wow': 15,
-        'laugh': 5,
-        'sad': 0,
-        'angry': 0,
-      },
       'isLiked': false,
       'type': 'normal',
     },
@@ -40,13 +33,6 @@ class _SocialPageState extends State<SocialPage> {
       'video': null,
       'likes': 28,
       'comments': 5,
-      'reactions': {
-        'love': 0,
-        'wow': 0,
-        'laugh': 0,
-        'sad': 15,
-        'angry': 0,
-      },
       'isLiked': false,
       'type': 'lost_found',
     },
@@ -60,13 +46,6 @@ class _SocialPageState extends State<SocialPage> {
       'video': 'assets/videos/cat_playing.mp4',
       'likes': 62,
       'comments': 18,
-      'reactions': {
-        'love': 25,
-        'wow': 12,
-        'laugh': 20,
-        'sad': 0,
-        'angry': 0,
-      },
       'isLiked': false,
       'type': 'normal',
     },
@@ -258,8 +237,6 @@ class _SocialPageState extends State<SocialPage> {
               ),
             ),
 
-          _buildReactionsBar(post),
-
           const Divider(),
 
           Padding(
@@ -295,13 +272,6 @@ class _SocialPageState extends State<SocialPage> {
                         duration: Duration(seconds: 1),
                       ),
                     );
-                  },
-                ),
-                _buildActionButton(
-                  icon: Icons.message_outlined,
-                  label: 'Message',
-                  onTap: () {
-                    _showMessageDialog(context, post);
                   },
                 ),
               ],
@@ -363,14 +333,6 @@ class _SocialPageState extends State<SocialPage> {
                   Navigator.pop(context);
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.message),
-                title: const Text('Message User'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showMessageDialog(context, post);
-                },
-              ),
               if (post['username'] == 'Emma Johnson')
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: Colors.red),
@@ -390,57 +352,6 @@ class _SocialPageState extends State<SocialPage> {
                 ),
             ],
           ),
-        );
-      },
-    );
-  }
-
-  void _showMessageDialog(BuildContext context, Map<String, dynamic> post) {
-    final messageController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Message ${post['username']}'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: messageController,
-                decoration: const InputDecoration(
-                  hintText: 'Type your message...',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (messageController.text.isNotEmpty) {
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Message sent to ${post['username']}'),
-                      backgroundColor: const Color(0xFF219EBC),
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF219EBC),
-              ),
-              child: const Text('Send'),
-            ),
-          ],
         );
       },
     );
@@ -856,13 +767,6 @@ class _SocialPageState extends State<SocialPage> {
                                 'video': null,
                                 'likes': 0,
                                 'comments': 0,
-                                'reactions': {
-                                  'love': 0,
-                                  'wow': 0,
-                                  'laugh': 0,
-                                  'sad': 0,
-                                  'angry': 0,
-                                },
                                 'isLiked': false,
                                 'type': postType,
                               });
@@ -902,42 +806,6 @@ class _SocialPageState extends State<SocialPage> {
     );
   }
 
-  Widget _buildReactionsBar(Map<String, dynamic> post) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildReactionButton(post, 'love', '❤️'),
-          _buildReactionButton(post, 'wow', '😮'),
-          _buildReactionButton(post, 'laugh', '😂'),
-          _buildReactionButton(post, 'sad', '😢'),
-          _buildReactionButton(post, 'angry', '😠'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReactionButton(Map<String, dynamic> post, String reaction, String emoji) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          post['reactions'][reaction]++;
-        });
-      },
-      child: Column(
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 24)),
-          const SizedBox(height: 4),
-          Text(
-            '${post['reactions'][reaction]}',
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFilterButtons() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -967,6 +835,8 @@ class _SocialPageState extends State<SocialPage> {
     );
   }
 }
+
+
 
 
 
