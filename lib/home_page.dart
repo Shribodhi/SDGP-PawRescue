@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'shop_page.dart';
 import 'travel_recommender.dart';
-import 'pet_tracker_page.dart'; 
+import 'pet_tracker_page.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final String userId;
+
+  const HomePage({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class HomePage extends StatelessWidget {
                 _buildClickableGridItem(context, 'Pet Tracker', 'assets/pet_tracker.png', onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const PetTrackerPage()),
+                    MaterialPageRoute(builder: (context) => PetTrackerPage(userId: userId,)),
                   );
                 }),
               ],

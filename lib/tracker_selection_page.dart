@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'pet_location_page.dart';
 import 'register_tracker.dart';
 
 class TrackerSelectionPage extends StatefulWidget {
-  const TrackerSelectionPage({super.key});
+  final String userId;
+
+  const TrackerSelectionPage({super.key, required this.userId});
 
   @override
   State<TrackerSelectionPage> createState() => _TrackerSelectionPageState();
@@ -15,6 +16,7 @@ class _TrackerSelectionPageState extends State<TrackerSelectionPage> {
   bool _isLoading = true;
   List<QueryDocumentSnapshot> _a9gTrackers = [];
   List<QueryDocumentSnapshot> _thirdPartyTrackers = [];
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -25,93 +27,101 @@ class _TrackerSelectionPageState extends State<TrackerSelectionPage> {
   Future<void> _loadTrackers() async {
     setState(() {
       _isLoading = true;
+      _errorMessage = '';
     });
 
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
     try {
+      // Fetch all trackers without user filtering
       final snapshot = await FirebaseFirestore.instance
           .collection('trackers')
-          .where('ownerId', isEqualTo: user.uid)
+          .where('ownerId', isEqualTo: widget.userId)
           .get();
 
       setState(() {
         _a9gTrackers = snapshot.docs
-            .where((doc) => (doc.data())['trackerModel'] == 'A9G')
+            .where((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              return data.containsKey('trackerModel') && 
+                     data['trackerModel'] == 'A9G';
+            })
             .toList();
+            
         _thirdPartyTrackers = snapshot.docs
-            .where((doc) => (doc.data())['trackerModel'] == 'Third Party')
+            .where((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              return data.containsKey('trackerModel') && 
+                     data['trackerModel'] == 'Third Party';
+            })
             .toList();
+            
         _isLoading = false;
       });
     } catch (e) {
       print('Error loading trackers: $e');
       setState(() {
         _isLoading = false;
+        _errorMessage = 'Error loading trackers: $e';
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pet Tracker'),
-        backgroundColor: Colors.orange,
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.orange))
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Select Tracker Type',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildTrackerTypeCard(
-                    title: 'PR Smart Tracker (A9G)',
-                    description: 'Advanced tracking with activity monitoring',
-                    icon: Icons.pets,
-                    color: Colors.orange,
-                    trackers: _a9gTrackers,
-                    isSmartTracker: true,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTrackerTypeCard(
-                    title: 'Third Party Tracker',
-                    description: 'Basic location tracking',
-                    icon: Icons.location_on,
-                    color: Colors.blue,
-                    trackers: _thirdPartyTrackers,
-                    isSmartTracker: false,
-                  ),
-                ],
-              ),
+    // Remove the Scaffold and AppBar since they're now provided by PetTrackerPage
+    return Column(
+      children: [
+        if (_errorMessage.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.all(8),
+            color: Colors.red.withOpacity(0.1),
+            width: double.infinity,
+            child: Text(
+              _errorMessage,
+              style: const TextStyle(color: Colors.red),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RegisterTrackerPage()),
-          ).then((_) => _loadTrackers());
-        },
-        backgroundColor: Colors.orange,
-        child: const Icon(Icons.add),
-      ),
+          ),
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator(color: Colors.orange))
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Select Tracker Type',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildTrackerTypeCard(
+                        title: 'PR Smart Tracker (A9G)',
+                        description: 'Advanced tracking with activity monitoring',
+                        icon: Icons.pets,
+                        color: Colors.orange,
+                        trackers: _a9gTrackers,
+                        isSmartTracker: true,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTrackerTypeCard(
+                        title: 'Third Party Tracker',
+                        description: 'Basic location tracking',
+                        icon: Icons.location_on,
+                        color: Colors.blue,
+                        trackers: _thirdPartyTrackers,
+                        isSmartTracker: false,
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+      ],
     );
   }
+
+  
 
   Widget _buildTrackerTypeCard({
     required String title,
@@ -191,15 +201,21 @@ class _TrackerSelectionPageState extends State<TrackerSelectionPage> {
                     leading: CircleAvatar(
                       backgroundColor: color.withOpacity(0.2),
                       child: Text(
-                        data['petName'].toString()[0].toUpperCase(),
+                        data.containsKey('petName') ? 
+                          data['petName'].toString()[0].toUpperCase() : 
+                          'P',
                         style: TextStyle(
                           color: color,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    title: Text(data['petName'] as String),
-                    subtitle: Text('${data['petType']} • ${data['simNumber']}'),
+                    title: Text(data.containsKey('petName') ? 
+                      data['petName'] as String : 
+                      'Pet ${index + 1}'),
+                    subtitle: Text(
+                      '${data.containsKey('petType') ? data['petType'] : 'Unknown'} • ${tracker.id}'
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
                       Navigator.push(
@@ -223,10 +239,11 @@ class _TrackerSelectionPageState extends State<TrackerSelectionPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => RegisterTrackerPage(
-                        initialTrackerModel: isSmartTracker ? 'A9G' : 'Third Party',
+                        initialTrackerModel: isSmartTracker ? 'A9G' : 'Third Party',userId: widget.userId,
+
                       ),
                     ),
-                  ).then((_) => _loadTrackers());
+                  ).then((_) => _loadTrackers()); 
                 },
                 icon: const Icon(Icons.add),
                 label: Text('Add ${isSmartTracker ? 'PR Smart' : 'Third Party'} Tracker'),
@@ -240,4 +257,6 @@ class _TrackerSelectionPageState extends State<TrackerSelectionPage> {
       ),
     );
   }
+
+  
 }

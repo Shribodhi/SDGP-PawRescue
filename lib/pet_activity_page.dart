@@ -53,24 +53,37 @@ class _PetActivityPageState extends State<PetActivityPage> with SingleTickerProv
           setState(() {
             _activityData = data['activityData'] as Map<String, dynamic>;
           });
+        } else {
+          // If activityData doesn't exist as a separate field, check if it's directly in the document
+          setState(() {
+            _activityData = {
+              'heart_rate': data.containsKey('heart_rate') ? data['heart_rate'] : 0,
+              'steps': data.containsKey('steps') ? data['steps'] : 0,
+              'timestamp': DateTime.now(),
+            };
+          });
         }
       }
 
-      // Get activity history
-      final historySnapshot = await FirebaseFirestore.instance
-          .collection('trackers')
-          .doc(widget.trackerId)
-          .collection('activityHistory')
-          .orderBy('timestamp', descending: true)
-          .limit(24) // Last 24 hours of data
-          .get();
+      // For demo purposes, create some mock history data
+      // In a real app, you'd fetch this from a subcollection
+      final now = DateTime.now();
+      final List<Map<String, dynamic>> mockHistory = [];
+      
+      for (int i = 0; i < 24; i++) {
+        mockHistory.add({
+          'heart_rate': 70 + (i % 5) * 10,
+          'steps': 100 * i,
+          'timestamp': Timestamp.fromDate(now.subtract(Duration(hours: i))),
+        });
+      }
 
       setState(() {
-        _activityHistory = historySnapshot.docs
-            .map((doc) => doc.data())
-            .toList();
+        _activityHistory = mockHistory;
         _isLoading = false;
       });
+      
+      print("Loaded activity data: $_activityData");
     } catch (e) {
       print('Error loading activity data: $e');
       setState(() {

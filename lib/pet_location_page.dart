@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import 'pet_activity_page.dart';
 import 'dart:async';
+import 'pet_activity_page.dart';
 
 class PetLocationPage extends StatefulWidget {
   final String trackerId;
@@ -90,11 +90,13 @@ class _PetLocationPageState extends State<PetLocationPage> {
       }
 
       final data = doc.data() as Map<String, dynamic>;
+      
+      // Extract location data based on your Firebase structure
       final location = data['lastKnownLocation'] as Map<String, dynamic>;
-
+      
       setState(() {
-        _petName = data['petName'] as String;
-        _petType = data['petType'] as String;
+        _petName = data.containsKey('petName') ? data['petName'] as String : 'Unknown Pet';
+        _petType = data.containsKey('petType') ? data['petType'] as String : 'Unknown';
         _petPosition = LatLng(
           location['latitude'] as double,
           location['longitude'] as double,
@@ -102,6 +104,7 @@ class _PetLocationPageState extends State<PetLocationPage> {
         _isLoading = false;
       });
 
+      print("Loaded pet details: $_petName, $_petType, position: $_petPosition");
       _updateMarkers();
     } catch (e) {
       print('Error loading pet details: $e');
@@ -120,6 +123,8 @@ class _PetLocationPageState extends State<PetLocationPage> {
       if (!snapshot.exists) return;
 
       final data = snapshot.data() as Map<String, dynamic>;
+      if (!data.containsKey('lastKnownLocation')) return;
+      
       final location = data['lastKnownLocation'] as Map<String, dynamic>;
 
       setState(() {
@@ -208,6 +213,23 @@ class _PetLocationPageState extends State<PetLocationPage> {
           ? const Center(child: CircularProgressIndicator(color: Colors.orange))
           : Column(
               children: [
+                // Demo mode banner
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.blue.withOpacity(0.1),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blue, size: 16),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Demo Mode: Viewing tracker data without login',
+                          style: TextStyle(color: Colors.blue, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: GoogleMap(
                     initialCameraPosition: CameraPosition(

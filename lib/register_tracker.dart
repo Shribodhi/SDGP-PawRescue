@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterTrackerPage extends StatefulWidget {
   final String? initialTrackerModel;
+  final String userId;
+
+  
 
   const RegisterTrackerPage({
     super.key,
     this.initialTrackerModel,
+    required this.userId
   });
 
   @override
@@ -30,24 +33,19 @@ class _RegisterTrackerPageState extends State<RegisterTrackerPage> {
   Future<void> _registerTracker() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final user = FirebaseAuth.instance.currentUser;
-        if (user == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please login to register a tracker')),
-          );
-          return;
-        }
+        // Generate a demo user ID since we're bypassing login
+        final String demoUserId = widget.userId;
 
         final trackerData = {
           'petName': _petNameController.text,
           'simNumber': _simNumberController.text,
           'petType': _selectedPetType,
           'trackerModel': _selectedTrackerModel,
-          'ownerId': user.uid,
+          'ownerId': demoUserId, // Using a demo user ID
           'createdAt': FieldValue.serverTimestamp(),
           'lastKnownLocation': {
-            'latitude': 0.0,
-            'longitude': 0.0,
+            'latitude': 6.9271, // Default location (Colombo)
+            'longitude': 79.8612,
             'timestamp': FieldValue.serverTimestamp(),
           },
         };
@@ -55,7 +53,7 @@ class _RegisterTrackerPageState extends State<RegisterTrackerPage> {
         // Add activity data if it's a smart tracker
         if (_selectedTrackerModel == 'A9G') {
           trackerData['activityData'] = {
-            'heart_rate': 0,
+            'heart_rate': 80, // Default heart rate
             'steps': 0,
             'timestamp': FieldValue.serverTimestamp(),
           };
@@ -94,6 +92,29 @@ class _RegisterTrackerPageState extends State<RegisterTrackerPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Demo mode banner
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.blue),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Demo Mode: No login required. Data will be saved to Firebase.',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
               TextFormField(
                 controller: _petNameController,
                 decoration: const InputDecoration(
