@@ -1,0 +1,2 @@
+C:/Users/dilha/Documents/GitHub/SDGP-PawRescue/android/app/.cxx/Debug/1n315321/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/dilha/Documents/GitHub/SDGP-PawRescue/android/app/.cxx/Debug/1n315321/armeabi-v7a/CMakeFiles/rebuild_cache.dir
