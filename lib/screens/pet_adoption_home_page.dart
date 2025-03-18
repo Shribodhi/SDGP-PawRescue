@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'create_pet_post_screen.dart'; // Import the new screen
 
 class PetAdoptionHomePage extends StatelessWidget {
   const PetAdoptionHomePage({super.key});
@@ -78,32 +77,6 @@ class PetAdoptionHomePage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: SizedBox(
-        width: 150,
-        height: 50,
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CreatePetPostScreen(),
-              ),
-            );
-          },
-          backgroundColor: Colors.orange,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: const Text(
-            'Create Post',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
