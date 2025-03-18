@@ -22,8 +22,13 @@ class PostService {
   
   // Create a new post
   Future<void> createPost(String content, String type, File? mediaFile) async {
+    // Get current user
+    final user = _auth.currentUser;
+    
     // If auth isn't ready yet, use a temporary ID
-    final userId = currentUserId ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
+    final userId = user?.uid ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
+    final username = user?.displayName ?? 'User';
+    final userImage = user?.photoURL ?? '';
     
     // Upload media if provided
     String? mediaUrl;
@@ -44,8 +49,8 @@ class PostService {
     await _firestore.collection('posts').add({
       'content': content,
       'userId': userId,
-      'username': 'User', // This will be updated when auth is ready
-      'userImage': '',
+      'username': username,
+      'userImage': userImage,
       'mediaUrl': mediaUrl ?? '',
       'mediaType': mediaType ?? '',
       'type': type,
@@ -55,8 +60,12 @@ class PostService {
   
   // Toggle like on a post
   Future<void> toggleLike(String postId) async {
+    // Get current user
+    final user = _auth.currentUser;
+    
     // If auth isn't ready yet, use a temporary ID
-    final userId = currentUserId ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
+    final userId = user?.uid ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
+    final username = user?.displayName ?? 'User';
     
     final likeRef = _firestore.collection('posts').doc(postId).collection('likes').doc(userId);
     final likeDoc = await likeRef.get();
@@ -68,7 +77,7 @@ class PostService {
       // Like
       await likeRef.set({
         'userId': userId,
-        'username': 'User', // This will be updated when auth is ready
+        'username': username,
         'createdAt': FieldValue.serverTimestamp(),
       });
     }
@@ -101,8 +110,13 @@ class PostService {
   
   // Add comment to a post
   Future<void> addComment(String postId, String content) async {
+    // Get current user
+    final user = _auth.currentUser;
+    
     // If auth isn't ready yet, use a temporary ID
-    final userId = currentUserId ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
+    final userId = user?.uid ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
+    final username = user?.displayName ?? 'User';
+    final userImage = user?.photoURL ?? '';
     
     await _firestore
         .collection('posts')
@@ -111,8 +125,8 @@ class PostService {
         .add({
           'content': content,
           'userId': userId,
-          'username': 'User', // This will be updated when auth is ready
-          'userImage': '',
+          'username': username,
+          'userImage': userImage,
           'createdAt': FieldValue.serverTimestamp(),
         });
   }
@@ -127,9 +141,20 @@ class PostService {
         .snapshots();
   }
   
+  // Get comments count
+  Future<int> getCommentsCount(String postId) async {
+    final commentsSnapshot = await _firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .get();
+        
+    return commentsSnapshot.docs.length;
+  }
+  
   // Delete a post
   Future<void> deletePost(String postId) async {
-    final userId = currentUserId ?? 'temp_user';
+    final userId = currentUserId;
     
     // Get the post to check if user is the author
     final postDoc = await _firestore.collection('posts').doc(postId).get();
@@ -138,8 +163,41 @@ class PostService {
     final postData = postDoc.data() as Map<String, dynamic>;
     
     // Only allow deletion if it's the user's post or we're in development mode
-    if (postData['userId'] == userId || userId.startsWith('temp_user')) {
+    if (postData['userId'] == userId || userId == null) {
+      // Delete all comments
+      final commentsSnapshot = await _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('comments')
+          .get();
+          
+      for (var doc in commentsSnapshot.docs) {
+        await doc.reference.delete();
+      }
+      
+      // Delete all likes
+      final likesSnapshot = await _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('likes')
+          .get();
+          
+      for (var doc in likesSnapshot.docs) {
+        await doc.reference.delete();
+      }
+      
+      // Delete the post document
       await _firestore.collection('posts').doc(postId).delete();
+      
+      // Delete media if exists
+      if (postData['mediaUrl'] != null && postData['mediaUrl'].toString().isNotEmpty) {
+        try {
+          final storageRef = FirebaseStorage.instance.refFromURL(postData['mediaUrl']);
+          await storageRef.delete();
+        } catch (e) {
+          print('Error deleting media: $e');
+        }
+      }
     }
   }
   
@@ -162,6 +220,26 @@ class PostService {
       return 'Just now';
     }
   }
+  
+  // Create user document if it doesn't exist
+  Future<void> createUserIfNotExists() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    
+    final userDoc = await _firestore.collection('users').doc(user.uid).get();
+    
+    if (!userDoc.exists) {
+      await _firestore.collection('users').doc(user.uid).set({
+        'userId': user.uid,
+        'username': user.displayName ?? 'User',
+        'email': user.email ?? '',
+        'photoURL': user.photoURL ?? '',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    }
+  }
 }
+
+
 
 
