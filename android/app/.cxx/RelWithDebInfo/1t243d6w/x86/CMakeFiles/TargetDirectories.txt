@@ -1,0 +1,2 @@
+C:/Users/kasun/OneDrive/Desktop/paws/SDGP-PawRescue/android/app/.cxx/RelWithDebInfo/1t243d6w/x86/CMakeFiles/edit_cache.dir
+C:/Users/kasun/OneDrive/Desktop/paws/SDGP-PawRescue/android/app/.cxx/RelWithDebInfo/1t243d6w/x86/CMakeFiles/rebuild_cache.dir
