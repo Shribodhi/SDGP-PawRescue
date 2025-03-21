@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../models/user_preferences.dart';
-import 'food_recommendation_screen.dart'; // Import the new screen
+import '../utils/theme_constants.dart';
+import 'food_recommendation_screen.dart';
 
 class PreferencesScreen extends StatefulWidget {
   final Function(UserPreferences) onSave;
@@ -49,29 +50,22 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   // Loading state
   bool _isLoading = false;
 
-  // Colors
-  final Color primaryColor = Colors.blue;
-  final Color secondaryColor = Colors.blue.shade100;
-  final Color textColor = Colors.blue.shade900;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pet Food Recommendation'),
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: Container(
         color: Colors.white,
         child: Column(
           children: [
-            // Blue decorative header
+            // Yellow decorative header
             Container(
               height: 20,
               decoration: BoxDecoration(
-                color: primaryColor,
+                color: AppTheme.primaryColor,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -212,27 +206,29 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
             ),
 
             // Bottom button
-            Padding(
+            Container(
               padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
               child: SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _getRecommendation,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                    elevation: 2,
-                  ),
                   child: _isLoading
                       ? const SizedBox(
                           height: 24,
                           width: 24,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: AppTheme.textColor,
                             strokeWidth: 2,
                           ),
                         )
@@ -258,7 +254,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: textColor,
+        color: AppTheme.textColor,
       ),
     );
   }
@@ -273,7 +269,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: secondaryColor),
+        border: Border.all(color: AppTheme.primaryLightColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -291,9 +287,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 child: DropdownButton<String>(
                   value: value,
                   isExpanded: true,
-                  icon: Icon(Icons.arrow_drop_down, color: primaryColor),
+                  icon:
+                      Icon(Icons.arrow_drop_down, color: AppTheme.primaryColor),
                   style: TextStyle(
-                    color: textColor,
+                    color: AppTheme.textColor,
                     fontSize: 16,
                   ),
                   onChanged: onChanged,
@@ -311,11 +308,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
               height: 36,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withOpacity(0.1),
+                color: AppTheme.primaryColor.withOpacity(0.1),
               ),
               child: Icon(
                 icon,
-                color: primaryColor,
+                color: AppTheme.primaryColor,
                 size: 18,
               ),
             ),
@@ -334,7 +331,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: secondaryColor),
+        border: Border.all(color: AppTheme.primaryLightColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -351,11 +348,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
           return FilterChip(
             label: Text(option),
             selected: isSelected,
-            checkmarkColor: Colors.white,
-            selectedColor: primaryColor,
+            checkmarkColor: AppTheme.textColor,
+            selectedColor: AppTheme.primaryColor,
             backgroundColor: Colors.grey.shade100,
             labelStyle: TextStyle(
-              color: isSelected ? Colors.white : textColor,
+              color: isSelected ? AppTheme.textColor : AppTheme.textLightColor,
             ),
             onSelected: (selected) {
               setState(() {
@@ -383,7 +380,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: secondaryColor),
+        border: Border.all(color: AppTheme.primaryLightColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -394,22 +391,20 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       ),
       child: Row(
         children: [
-          Icon(icon, color: primaryColor, size: 20),
+          Icon(icon, color: AppTheme.primaryColor, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               label,
               style: TextStyle(
                 fontSize: 16,
-                color: textColor,
+                color: AppTheme.textColor,
               ),
             ),
           ),
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: primaryColor,
-            activeTrackColor: secondaryColor,
           ),
         ],
       ),
@@ -422,7 +417,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: secondaryColor),
+        border: Border.all(color: AppTheme.primaryLightColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -441,14 +436,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.1),
+                  color: AppTheme.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${_portionSize.toStringAsFixed(1)} cups',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: primaryColor,
+                    color: AppTheme.primaryColor,
                   ),
                 ),
               ),
@@ -460,8 +455,6 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
             min: 0.5,
             max: 5.0,
             divisions: 9,
-            activeColor: primaryColor,
-            inactiveColor: secondaryColor,
             label: '${_portionSize.toStringAsFixed(1)} cups',
             onChanged: (value) {
               setState(() {
@@ -556,32 +549,5 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     } finally {
       setState(() => _isLoading = false);
     }
-  }
-
-  // Remove the _showRecommendationDialog method as we're now navigating to a new screen
-
-  Widget _buildInfoChip(String label, IconData icon) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.blue.shade100),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: primaryColor),
-          SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: primaryColor,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

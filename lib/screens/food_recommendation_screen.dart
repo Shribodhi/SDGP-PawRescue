@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/tflite_service.dart';
+import '../utils/theme_constants.dart';
 
 class FoodRecommendationScreen extends StatefulWidget {
   final Map<String, dynamic> petPreferences;
@@ -19,7 +20,7 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
   String _errorMessage = '';
   int _recommendedIndex = 0;
 
-  // Sample food database - Replace with your actual food options
+  // Sample food database
   final List<Map<String, dynamic>> _foodOptions = [
     {
       'name': 'Premium Dog Nutrition',
@@ -156,7 +157,6 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
 
   List<double> _convertPreferencesToInput(Map<String, dynamic> preferences) {
     // Convert preferences to a format your TFLite model can understand
-    // This is a simplified example - adjust based on your model's requirements
     List<double> inputData = [];
 
     // Pet Type (one-hot encoding)
@@ -231,8 +231,6 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
 
   int _getDefaultRecommendation(Map<String, dynamic> preferences) {
     // This is a fallback method if the AI model fails
-    // It uses simple rules to determine the best food option
-
     if (preferences['petType'] == 'Dog') {
       if (preferences['petAge'] == 'Puppy/Kitten') {
         return 3; // Puppy Growth Formula
@@ -264,8 +262,6 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Food Recommendation'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
       ),
       body: _isLoading ? _buildLoadingState() : _buildRecommendationContent(),
     );
@@ -276,12 +272,12 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(color: Colors.blue),
+          CircularProgressIndicator(color: AppTheme.primaryColor),
           const SizedBox(height: 20),
           Text(
             'Finding the perfect food for your pet...',
             style: TextStyle(
-              color: Colors.blue.shade700,
+              color: AppTheme.primaryColor,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -342,17 +338,17 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: AppTheme.primaryColor,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.pets, color: Colors.white, size: 40),
+                  Icon(Icons.pets, color: AppTheme.textColor, size: 40),
                   const SizedBox(height: 10),
                   Text(
                     'Perfect Match Found!',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppTheme.textColor,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -361,7 +357,7 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
                   Text(
                     'Based on your ${widget.petPreferences['petType']}\'s needs',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: AppTheme.textColor.withOpacity(0.9),
                       fontSize: 16,
                     ),
                   ),
@@ -372,25 +368,37 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
             const SizedBox(height: 24),
 
             // Food image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                recommendedFood['image'],
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 200,
-                    width: double.infinity,
-                    color: Colors.grey.shade300,
-                    child: Icon(
-                      Icons.image_not_supported,
-                      color: Colors.grey.shade700,
-                      size: 50,
-                    ),
-                  );
-                },
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  recommendedFood['image'],
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      width: double.infinity,
+                      color: Colors.grey.shade300,
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey.shade700,
+                        size: 50,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
 
@@ -403,9 +411,10 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
                 Expanded(
                   child: Text(
                     recommendedFood['name'],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
+                      color: AppTheme.textColor,
                     ),
                   ),
                 ),
@@ -413,18 +422,19 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.amber.shade100,
+                    color: AppTheme.primaryLightColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 18),
+                      Icon(Icons.star,
+                          color: AppTheme.primaryDarkColor, size: 18),
                       const SizedBox(width: 4),
                       Text(
                         recommendedFood['rating'].toString(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber,
+                          color: AppTheme.primaryDarkColor,
                         ),
                       ),
                     ],
@@ -440,7 +450,7 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
               recommendedFood['price'],
               style: TextStyle(
                 fontSize: 20,
-                color: Colors.blue.shade700,
+                color: AppTheme.primaryColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -452,7 +462,7 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
               recommendedFood['description'],
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey.shade700,
+                color: AppTheme.textLightColor,
               ),
             ),
 
@@ -467,9 +477,9 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
                 return Chip(
                   label: Text(
                     feature,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: AppTheme.textColor, fontSize: 14),
                   ),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: AppTheme.primaryColor,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                 );
@@ -479,21 +489,22 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
             const SizedBox(height: 24),
 
             // Benefits
-            const Text(
+            Text(
               'Benefits',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: AppTheme.textColor,
               ),
             ),
 
             const SizedBox(height: 12),
 
-            ...List.generate(
-              (recommendedFood['benefits'] as List<String>).length,
-              (index) {
-                final benefit =
-                    (recommendedFood['benefits'] as List<String>)[index];
+            // Benefits list
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:
+                  (recommendedFood['benefits'] as List<String>).map((benefit) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Row(
@@ -501,7 +512,7 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
                     children: [
                       Icon(
                         Icons.check_circle,
-                        color: Colors.green,
+                        color: AppTheme.successColor,
                         size: 22,
                       ),
                       const SizedBox(width: 12),
@@ -510,58 +521,43 @@ class _FoodRecommendationScreenState extends State<FoodRecommendationScreen> {
                           benefit,
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey.shade800,
+                            color: AppTheme.textColor,
                           ),
                         ),
                       ),
                     ],
                   ),
                 );
-              },
+              }).toList(),
             ),
 
             const SizedBox(height: 30),
 
-            // Action buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      // Handle view details action
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.blue,
-                      side: const BorderSide(color: Colors.blue),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: const Text('View Details'),
+            // "Go Back" button
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back),
+                label: const Text(
+                  'Back to Preferences',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle buy now action
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: const Text('Buy Now'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: AppTheme.textColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28),
                   ),
                 ),
-              ],
+              ),
             ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),
