@@ -62,6 +62,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "intl",
+      "rootUri": "file:///C:/Users/Shribodhi%20R/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.17.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "leak_tracker",
       "rootUri": "file:///C:/Users/Shribodhi%20R/AppData/Local/Pub/Cache/hosted/pub.dev/leak_tracker-10.0.8",
       "packageUri": "lib/",
@@ -170,7 +176,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2025-03-20T22:19:06.150242Z",
+  "generated": "2025-03-21T12:57:07.007296Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///C:/flutter/src/flutter",
