@@ -60,75 +60,95 @@ class PostService {
   
   // Toggle like on a post
   Future<void> toggleLike(String postId) async {
-    // Get current user
-    final user = _auth.currentUser;
-    
-    // If auth isn't ready yet, use a temporary ID
-    final userId = user?.uid ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
-    final username = user?.displayName ?? 'User';
-    
-    final likeRef = _firestore.collection('posts').doc(postId).collection('likes').doc(userId);
-    final likeDoc = await likeRef.get();
-    
-    if (likeDoc.exists) {
-      // Unlike
-      await likeRef.delete();
-    } else {
-      // Like
-      await likeRef.set({
-        'userId': userId,
-        'username': username,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+    try {
+      // Get current user
+      final user = _auth.currentUser;
+      
+      // If auth isn't ready yet, use a temporary ID
+      final userId = user?.uid ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
+      final username = user?.displayName ?? 'User';
+      
+      final likeRef = _firestore.collection('posts').doc(postId).collection('likes').doc(userId);
+      final likeDoc = await likeRef.get();
+      
+      if (likeDoc.exists) {
+        // Unlike
+        await likeRef.delete();
+      } else {
+        // Like
+        await likeRef.set({
+          'userId': userId,
+          'username': username,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (e) {
+      print('Error toggling like: $e');
+      // Silently fail - don't throw the error to the UI
     }
   }
   
   // Check if user liked a post
   Future<bool> isPostLiked(String postId) async {
-    final userId = currentUserId ?? 'temp_user';
-    
-    final likeDoc = await _firestore
-        .collection('posts')
-        .doc(postId)
-        .collection('likes')
-        .doc(userId)
-        .get();
-        
-    return likeDoc.exists;
+    try {
+      final userId = currentUserId ?? 'temp_user';
+      
+      final likeDoc = await _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('likes')
+          .doc(userId)
+          .get();
+          
+      return likeDoc.exists;
+    } catch (e) {
+      print('Error checking if post is liked: $e');
+      return false; // Default to not liked if there's an error
+    }
   }
   
   // Get likes count
   Future<int> getLikesCount(String postId) async {
-    final likesSnapshot = await _firestore
-        .collection('posts')
-        .doc(postId)
-        .collection('likes')
-        .get();
-        
-    return likesSnapshot.docs.length;
+    try {
+      final likesSnapshot = await _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('likes')
+          .get();
+          
+      return likesSnapshot.docs.length;
+    } catch (e) {
+      print('Error getting likes count: $e');
+      return 0; // Return 0 likes if there's an error
+    }
   }
   
   // Add comment to a post
   Future<void> addComment(String postId, String content) async {
-    // Get current user
-    final user = _auth.currentUser;
-    
-    // If auth isn't ready yet, use a temporary ID
-    final userId = user?.uid ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
-    final username = user?.displayName ?? 'User';
-    final userImage = user?.photoURL ?? '';
-    
-    await _firestore
-        .collection('posts')
-        .doc(postId)
-        .collection('comments')
-        .add({
-          'content': content,
-          'userId': userId,
-          'username': username,
-          'userImage': userImage,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
+    try {
+      // Get current user
+      final user = _auth.currentUser;
+      
+      // If auth isn't ready yet, use a temporary ID
+      final userId = user?.uid ?? 'temp_user_${DateTime.now().millisecondsSinceEpoch}';
+      final username = user?.displayName ?? 'User';
+      final userImage = user?.photoURL ?? '';
+      
+      await _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('comments')
+          .add({
+            'content': content,
+            'userId': userId,
+            'username': username,
+            'userImage': userImage,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+    } catch (e) {
+      print('Error adding comment: $e');
+      throw e; // Re-throw to let the UI know there was an error
+    }
   }
   
   // Get comments for a post
@@ -143,61 +163,54 @@ class PostService {
   
   // Get comments count
   Future<int> getCommentsCount(String postId) async {
-    final commentsSnapshot = await _firestore
-        .collection('posts')
-        .doc(postId)
-        .collection('comments')
-        .get();
-        
-    return commentsSnapshot.docs.length;
-  }
-  
-  // Delete a post
-  Future<void> deletePost(String postId) async {
-    final userId = currentUserId;
-    
-    // Get the post to check if user is the author
-    final postDoc = await _firestore.collection('posts').doc(postId).get();
-    if (!postDoc.exists) return;
-    
-    final postData = postDoc.data() as Map<String, dynamic>;
-    
-    // Only allow deletion if it's the user's post or we're in development mode
-    if (postData['userId'] == userId || userId == null) {
-      // Delete all comments
+    try {
       final commentsSnapshot = await _firestore
           .collection('posts')
           .doc(postId)
           .collection('comments')
           .get();
           
-      for (var doc in commentsSnapshot.docs) {
-        await doc.reference.delete();
+      return commentsSnapshot.docs.length;
+    } catch (e) {
+      print('Error getting comments count: $e');
+      return 0; // Return 0 comments if there's an error
+    }
+  }
+  
+  // Delete a post - improved version
+  Future<bool> deletePost(String postId) async {
+    try {
+      // Get the post document
+      final postDoc = await _firestore.collection('posts').doc(postId).get();
+      
+      if (!postDoc.exists) {
+        print('Post does not exist');
+        return false;
       }
       
-      // Delete all likes
-      final likesSnapshot = await _firestore
-          .collection('posts')
-          .doc(postId)
-          .collection('likes')
-          .get();
-          
-      for (var doc in likesSnapshot.docs) {
-        await doc.reference.delete();
-      }
+      // Get post data
+      final postData = postDoc.data() as Map<String, dynamic>;
       
-      // Delete the post document
+      // Delete the post document first
       await _firestore.collection('posts').doc(postId).delete();
+      print('Post document deleted successfully');
       
-      // Delete media if exists
+      // Try to delete media if it exists
       if (postData['mediaUrl'] != null && postData['mediaUrl'].toString().isNotEmpty) {
         try {
           final storageRef = FirebaseStorage.instance.refFromURL(postData['mediaUrl']);
           await storageRef.delete();
+          print('Post media deleted successfully');
         } catch (e) {
-          print('Error deleting media: $e');
+          print('Warning: Could not delete media: $e');
+          // Continue even if media deletion fails
         }
       }
+      
+      return true;
+    } catch (e) {
+      print('Error deleting post: $e');
+      return false;
     }
   }
   
@@ -239,6 +252,8 @@ class PostService {
     }
   }
 }
+
+
 
 
 
