@@ -3,7 +3,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../screens/pet_adoption_home_page.dart';
 
 class SubmissionSplashScreen extends StatefulWidget {
-  const SubmissionSplashScreen({super.key});
+  final int loadingDuration;
+
+  const SubmissionSplashScreen({super.key, this.loadingDuration = 3});
 
   @override
   _SubmissionSplashScreenState createState() => _SubmissionSplashScreenState();
@@ -15,14 +17,14 @@ class _SubmissionSplashScreenState extends State<SubmissionSplashScreen> {
   @override
   void initState() {
     super.initState();
-    // After 5 seconds, show the success checkmark
-    Future.delayed(const Duration(seconds: 5), () {
+    // Show loading spinner for the specified duration
+    Future.delayed(Duration(seconds: widget.loadingDuration), () {
       setState(() {
         showCheckMark = true;
       });
 
-      // Navigate back to home page after showing success for 1 second
-      Future.delayed(const Duration(seconds: 1), () {
+      // Navigate back to home page after showing checkmark for 1.5 seconds
+      Future.delayed(const Duration(milliseconds: 1500), () {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const PetAdoptionHomePage()),
         );

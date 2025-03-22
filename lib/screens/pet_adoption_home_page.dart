@@ -31,7 +31,7 @@ class _PetAdoptionHomePageState extends State<PetAdoptionHomePage> {
     ),
     const Pet(
       image: "assets/twin_kittens.jpg",
-      name: "(Luna [F] & Leo [M]) Twin Kitten",
+      name: "Luna [F] & Leo [M] Twins",
       breed: "Siamese",
       location: "Galle",
       age: "55 days",
