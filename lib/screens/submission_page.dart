@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import '../models/pet.dart';
+import '../widgets/submission_splash_screen.dart';
 
 class SubmissionPage extends StatefulWidget {
   final Pet pet;
@@ -269,22 +270,30 @@ class _SubmissionPageState extends State<SubmissionPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                     backgroundColor: Colors.orange,
                   ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate() && agreeToTerms) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Thank you for your submission! You have applied to adopt ${widget.pet.name}. We will review your application and get back to you soon.',
-                          ),
-                        ),
-                      );
-                      Navigator.pop(context); // Navigate back after submission
-                    } else if (!agreeToTerms) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please agree to the terms and conditions')),
-                      );
-                    }
-                  },
+                    onPressed: () {
+                      if (_formKey.currentState!.validate() && agreeToTerms) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SubmissionSplashScreen()),
+                        );
+
+                        Future.delayed(const Duration(seconds: 2), () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Thank you for your submission! You have applied to adopt ${widget.pet.name}. We will review your application and get back to you soon.',
+                              ),
+                            ),
+                          );
+                          Navigator.pop(context); // Close the splash screen
+                          Navigator.pop(context); // Navigate back after submission
+                        });
+                      } else if (!agreeToTerms) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please agree to the terms and conditions')),
+                        );
+                      }
+                    },
                   child: const Text('Submit', style: TextStyle(fontSize: 16)),
                 ),
               ),
