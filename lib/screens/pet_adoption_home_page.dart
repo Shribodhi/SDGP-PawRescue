@@ -31,15 +31,15 @@ class _PetAdoptionHomePageState extends State<PetAdoptionHomePage> {
     ),
     const Pet(
       image: "assets/twin_kittens.jpg",
-      name: "Twin Kitten",
+      name: "(Luna [F] & Leo [M]) Twin Kitten",
       breed: "Siamese",
       location: "Galle",
       age: "55 days",
-      sex: "Male/Female",
+      sex: "Female/Male",
     ),
     const Pet(
       image: "assets/labrador_puppy.jpg",
-      name: "Labrador Puppy",
+      name: "Max",
       breed: "Labrador Retriever",
       location: "Matara",
       age: "8 months",
@@ -47,7 +47,7 @@ class _PetAdoptionHomePageState extends State<PetAdoptionHomePage> {
     ),
     const Pet(
       image: "assets/persian_cat.jpg",
-      name: "Persian Cat",
+      name: "Oscar",
       breed: "Persian",
       location: "Kandy",
       age: "1 year",
@@ -55,7 +55,7 @@ class _PetAdoptionHomePageState extends State<PetAdoptionHomePage> {
     ),
     const Pet(
       image: "assets/golden_retriever.jpg",
-      name: "Golden Retriever",
+      name: "Peach",
       breed: "Golden Retriever",
       location: "Colombo",
       age: "3 years",
@@ -63,7 +63,7 @@ class _PetAdoptionHomePageState extends State<PetAdoptionHomePage> {
     ),
     const Pet(
       image: "assets/siamese_cat.jpg",
-      name: "Siamese Cat",
+      name: "Suki",
       breed: "Siamese",
       location: "Colombo",
       age: "2 years",
