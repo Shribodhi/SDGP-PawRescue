@@ -15,15 +15,16 @@ class _SubmissionSplashScreenState extends State<SubmissionSplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    // After 5 seconds, show the success checkmark
+    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         showCheckMark = true;
       });
-      Future.delayed(const Duration(seconds: 4), () { // Increased duration to 4 seconds
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const PetAdoptionHomePage()),
-              (Route<dynamic> route) => false,
+
+      // Navigate back to home page after showing success for 1 second
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const PetAdoptionHomePage()),
         );
       });
     });
@@ -42,18 +43,25 @@ class _SubmissionSplashScreenState extends State<SubmissionSplashScreen> {
                 color: Colors.orange,
                 size: 50.0,
               )
-            else ...[
-              const Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 50.0,
+            else
+              const Column(
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 80.0,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Submission Successful!',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Submission Successful!',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
           ],
         ),
       ),
